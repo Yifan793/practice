@@ -1,0 +1,15 @@
+D:\workspace\practice\CSharp\quickSort\quickSort\bin\Debug\net6.0\quickSort.exe
+D:\workspace\practice\CSharp\quickSort\quickSort\bin\Debug\net6.0\quickSort.deps.json
+D:\workspace\practice\CSharp\quickSort\quickSort\bin\Debug\net6.0\quickSort.runtimeconfig.json
+D:\workspace\practice\CSharp\quickSort\quickSort\bin\Debug\net6.0\quickSort.dll
+D:\workspace\practice\CSharp\quickSort\quickSort\bin\Debug\net6.0\quickSort.pdb
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.csproj.AssemblyReference.cache
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.GeneratedMSBuildEditorConfig.editorconfig
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.AssemblyInfoInputs.cache
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.AssemblyInfo.cs
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.csproj.CoreCompileInputs.cache
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.dll
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\refint\quickSort.dll
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.pdb
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\quickSort.genruntimeconfig.cache
+D:\workspace\practice\CSharp\quickSort\quickSort\obj\Debug\net6.0\ref\quickSort.dll
