@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace Program
+﻿namespace Program
 {
-    class QuickSort
+    public class QuickSort
     {
-        static void Main(string[] args)
+        public void Main()
         {
-            string str = Console.ReadLine();
-            string[] strArray = str.Split(' ');
-            List<int> input = new List<int>(11);
+            string? str = Console.ReadLine();
+            string[] strArray = str!.Split(' ');
+            List<int> input = new (11);
             foreach (string s in strArray)
             {
                 try
@@ -17,7 +15,7 @@ namespace Program
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error! please enter valid number");
+                    Console.WriteLine("Error! please enter valid number\n" + e);
                     return;
                 }
                 input.Add(int.Parse(s));
@@ -36,7 +34,7 @@ namespace Program
             Console.WriteLine(" ");
         }
 
-        static void Sort(List<int> list, int left, int right)
+        public void Sort(List<int> list, int left, int right)
         {
             if (left > right) {
                 return;
@@ -56,6 +54,7 @@ namespace Program
                 }
                 if (i < j)
                 {
+                    
                     int t = list[i];
                     list[i] = list[j];
                     list[j] = t;
