@@ -9,10 +9,33 @@ namespace practice
         {
             List<int> list = new List<int>();
             list.Add(1);
-            list.Add(2);
+            list.Insert(1, 2);
             list.Add(3);
             list.Add(4);
-            list.print();
+            list.Print();
+            Console.WriteLine("count is " + list.Count);
+            Console.WriteLine("================");
+            Console.WriteLine("list contains 4 is " + list.Contains(4));
+            Console.WriteLine("list indexof(3) is " + list.IndexOf(3));
+            Console.WriteLine("================");
+            list.Remove(1);
+            list.Print();
+            Console.WriteLine("count is " + list.Count);
+            Console.WriteLine("================");
+            list.RemoveAt(2);
+            list.Print();
+            Console.WriteLine("count is " + list.Count);
+            Console.WriteLine("================");
+            Console.WriteLine("list[1] is " + list[1]);
+            Console.WriteLine("================");
+            foreach (int i in list)
+            {
+                Console.WriteLine(i);
+            }
+            Console.WriteLine("================");
+            list.Clear();
+            list.Print();
+            Console.WriteLine("================");
         }
     }
 
@@ -68,7 +91,6 @@ namespace practice
             if (head == null)
             {
                 head = new Node<T>(item);
-                _count++;
             }
             else
             {
@@ -76,10 +98,10 @@ namespace practice
                 while (node._Next != null)
                 {
                     node = node._Next;
-                    _count++;
                 }
                 node._Next = new Node<T>(item);
             }
+            _count++;
         }
         /**
          * @brief 插入
@@ -184,7 +206,7 @@ namespace practice
             else
             {
                 Node<T> pre = null;
-                for (int i = 0; i <= index; i++)
+                for (int i = 0; i < index; i++)
                 {
                     pre = node;
                     node = node._Next;
@@ -234,7 +256,7 @@ namespace practice
         /**
          * @brief 打印全部元素
          */
-        public void print()
+        public void Print()
         {
             Node<T> node = head;
             while (node != null)

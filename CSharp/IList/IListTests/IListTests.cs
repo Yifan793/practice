@@ -13,7 +13,7 @@ namespace IListTests
             list.Add(-1);
             list.Add('a');
             list.Add(999999);
-            list.print();
+            list.Print();
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@ namespace IListTests
             Console.WriteLine(list.Remove(1));
             Console.WriteLine(list.Remove(2));
             Console.WriteLine(list.Remove(2));
-            list.print();
+            list.Print();
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace IListTests
 
             //list.Insert(4, 5);    //error
             //list.Insert(-1, 'c'); //error
-            list.print();
+            list.Print();
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace IListTests
             list[3] = 3;
             //list[7] = 0;   //error
             //list[-1] = 0;  //error
-            list.print();
+            list.Print();
         }
 
         [TestMethod]
