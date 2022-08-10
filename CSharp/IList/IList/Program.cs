@@ -2,7 +2,6 @@
 
 namespace practice
 {
-
     class Entry
     {
         static void Main(string[] args)
@@ -39,25 +38,25 @@ namespace practice
         }
     }
 
-    class Node<T>
+    public class Node<T>
     {
-        public T _Value;
-        public Node<T>? _Next;
+        public T Value { get; set; }
+        public Node<T> Next { get; set; }
         public Node(T value)
         {
-            _Value = value;
-            _Next = null;
+            Value = value;
+            Next = null;
         }
         public Node(T value, Node<T> next)
         {
-            _Value = value;
-            _Next = next;
+            Value = value;
+            Next = next;
         }
     }
 
-    public class List<T>
+    public class List<T> : IList<T>
     {
-        private Node<T>? head = null;
+        private Node<T> _head = null;
         private int _count = 0;
 
         public int Count
@@ -88,20 +87,7 @@ namespace practice
          */
         public void Add(T item)
         {
-            if (head == null)
-            {
-                head = new Node<T>(item);
-            }
-            else
-            {
-                Node<T> node = head;
-                while (node._Next != null)
-                {
-                    node = node._Next;
-                }
-                node._Next = new Node<T>(item);
-            }
-            _count++;
+            Insert(_count, item);
         }
         /**
          * @brief 插入
@@ -110,30 +96,30 @@ namespace practice
          */
         public void Insert(int index, T item)
         {
-            if (index > _count)
+            if (index < 0 || index > _count)
             {
                 throw new Exception("Error! insert out of range");
             }
-            Node<T> node = head;
+            Node<T> node = _head;
             Node<T> pre = null;
             Node<T> next;
             if (index == 0)
             {
-                next = head;
-                head = new Node<T>(item);
-                head._Next = next;
+                next = _head;
+                _head = new Node<T>(item);
+                _head.Next = next;
             }
             else
             {
                 for (int i = 0; i < index; i++)
                 {
                     pre = node;
-                    node = node._Next;
+                    node = node.Next;
                 }
                 next = node;
                 node = new Node<T>(item);
-                node._Next = next;
-                pre._Next = node;
+                node.Next = next;
+                pre.Next = node;
             }
             _count++;
         }
@@ -153,15 +139,15 @@ namespace practice
         public int IndexOf(T item)
         {
             int result = -1;
-            Node<T> node = head;
+            Node<T> node = _head;
             for (int i = 0; i < _count; i++)
             {
-                if (node._Value.Equals(item))
+                if (node.Value.Equals(item))
                 {
                     result = i;
                     break;
                 }
-                node = node._Next;
+                node = node.Next;
             }
             return result;
         }
@@ -171,7 +157,7 @@ namespace practice
          */
         public void Clear()
         {
-            head = null;
+            _head = null;
             _count = 0;
         }
         /**
@@ -198,10 +184,10 @@ namespace practice
             {
                 throw new Exception("Error! remvoe out of range");
             }
-            Node<T> node = head;
+            Node<T> node = _head;
             if (index == 0)
             {
-                head = head._Next;
+                _head = _head.Next;
             }
             else
             {
@@ -209,12 +195,22 @@ namespace practice
                 for (int i = 0; i < index; i++)
                 {
                     pre = node;
-                    node = node._Next;
+                    node = node.Next;
                 }
-                pre._Next = node._Next;
+                pre.Next = node.Next;
             }
             _count--;
         }
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            Node<T> node = _head;
+            for (int i = 0; i < _count; i++)
+            {
+                array[arrayIndex + i] = node.Value;
+                node = node.Next;
+            }
+        }
+
 
         /**
          * @brief 索引器
@@ -225,45 +221,111 @@ namespace practice
             {
                 if (index >= 0 && index < _count)
                 {
-                    Node<T> node = head;
+                    Node<T> node = _head;
                     for (int i = 0; i < index; i++)
                     {
-                        node = node._Next;
+                        node = node.Next;
                     }
-                    return node._Value;
+                    return node.Value;
                 }
                 throw new Exception("Error! get out of range");
             }
             set
             {
-                Insert(index, value);
+                if (index >= 0 && index < _count)
+                {
+                    Node<T> node = _head;
+                    for (int i = 0; i < index; i++)
+                    {
+                        node = node.Next;
+                    }
+                    node.Value = value;
+                }
+                throw new Exception("Error! set out of range");
             }
         }
+
         /**
          * @brief 迭代器
          */
         public IEnumerator<T> GetEnumerator()
         {
-            Node<T> node = head;
-            Node<T> result;
-            while (node != null)
-            {
-                result = node;
-                node = node._Next;
-                yield return result._Value;
-            }
+            //yield 方式
+            //Node<T> node = _head;
+            //Node<T> result;
+            //while (node != null)
+            //{
+            //    result = node;
+            //    node = node.Next;
+            //    yield return result.Value;
+            //}
+
+            return new ListEnumerator<T>(_head);
         }
         /**
          * @brief 打印全部元素
          */
         public void Print()
         {
-            Node<T> node = head;
+            Node<T> node = _head;
             while (node != null)
             {
-                Console.WriteLine(node._Value);
-                node = node._Next;
+                Console.WriteLine(node.Value);
+                node = node.Next;
             }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ListEnumerator<T> : IEnumerator<T>
+    {
+        private Node<T> _head;
+        private Node<T> curNode;
+
+        public ListEnumerator(Node<T> head)
+        {
+            _head = head;
+        }
+
+        public bool MoveNext()
+        {
+            if (curNode == null)
+            {
+                curNode = _head;
+                return true;
+            }
+
+            if (curNode.Next == null)
+            {
+                return false;
+            }
+            else
+            {
+                curNode = curNode.Next;
+            }
+            return true;
+        }
+
+        public void Reset()
+        {
+            curNode = null;
+        }
+
+        public void Dispose()
+        {
+        }
+
+        public T Current
+        {
+            get { return curNode.Value; }
+        }
+        object IEnumerator.Current
+        {
+            get { return Current; }
         }
     }
 }
