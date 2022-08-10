@@ -284,7 +284,7 @@ namespace practice
     public class ListEnumerator<T> : IEnumerator<T>
     {
         private Node<T> _head;
-        private Node<T> curNode;
+        private Node<T> _curNode;
 
         public ListEnumerator(Node<T> head)
         {
@@ -293,26 +293,26 @@ namespace practice
 
         public bool MoveNext()
         {
-            if (curNode == null)
+            if (_curNode == null)
             {
-                curNode = _head;
+                _curNode = _head;
                 return true;
             }
 
-            if (curNode.Next == null)
+            if (_curNode.Next == null)
             {
                 return false;
             }
             else
             {
-                curNode = curNode.Next;
+                _curNode = _curNode.Next;
             }
             return true;
         }
 
         public void Reset()
         {
-            curNode = null;
+            _curNode = null;
         }
 
         public void Dispose()
@@ -321,7 +321,7 @@ namespace practice
 
         public T Current
         {
-            get { return curNode.Value; }
+            get { return _curNode.Value; }
         }
         object IEnumerator.Current
         {
