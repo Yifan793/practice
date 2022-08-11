@@ -9,6 +9,10 @@ namespace Contacts
 {
     public class Group
     {
+        public Group()
+        {
+            Members = new ObservableCollection<Person>();
+        }
         public string Name { get; set; }
         public ObservableCollection<Person> Members { get; set; }
     }

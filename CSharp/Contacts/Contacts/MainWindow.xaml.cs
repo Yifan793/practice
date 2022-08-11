@@ -40,17 +40,18 @@ namespace Contacts
 
         public void LoadResources(string path)
         {
-            ObservableCollection<GroupViewModel> groupItems = new ObservableCollection<GroupViewModel>();
+            ObservableCollection<Group> groups = new ObservableCollection<Group>();
             JsonData data = JsonMapper.ToObject(File.ReadAllText(path));
             JsonData contactBooks  = data["ContactBooks"];
             for (int i = 0; i < contactBooks.Count; i++)
             {
-                GroupViewModel group = new GroupViewModel();
+                Group group = new Group();
                 group.Name = contactBooks[i]["GroupName"].ToString();
                 JsonData contacts = contactBooks[i]["Contacts"];
                 for (int j = 0; j < contacts.Count; j++)
                 {
-                    PersonViewModel person = new PersonViewModel();
+                    Person person = new Person();
+                    PersonViewModel personViewModel = new PersonViewModel();
                     person.Name = contacts[j]["Name"]?.ToString();
                     person.Number = contacts[j]["Number"]?.ToString();
                     person.Gender = (bool)contacts[j]["Gender"];
@@ -58,11 +59,13 @@ namespace Contacts
                     person.Avatar = contacts[j]["Avatar"]?.ToString();
                     person.Email = contacts[j]["Email"]?.ToString();
                     person.Notes = contacts[j]["Notes"]?.ToString();
+
+                    personViewModel.Model = person;
                     group.Members.Add(person);
                 }
-                groupItems.Add(group);
+                groups.Add(group);
             }
-            ViewModel.Model = groupItems;
+            ViewModel.Model = groups;
         }
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -142,18 +145,28 @@ namespace Contacts
         {
             get
             {
-                return new Group()
+                Group group = new Group();
+                group.Name = this.Name;
+                ObservableCollection<Person> people = new ObservableCollection<Person>();
+                foreach (PersonViewModel personViewModel in Members)
                 {
-                    Name = this.Name,
-                    Members = new ObservableCollection<Person>()
-                    {
-
-                    }
-                };
+                    Person person = personViewModel.Model;
+                    people.Add(person);
+                }
+                group.Members = people;
+                return group;
             }
             set
             {
                 Name = value.Name;
+                ObservableCollection<PersonViewModel> peopleViewModel = new ObservableCollection<PersonViewModel>();
+                foreach(Person person in value.Members)
+                {
+                    PersonViewModel personViewModel = new PersonViewModel();
+                    personViewModel.Model = person;
+                    peopleViewModel.Add(personViewModel);
+                }
+                Members = peopleViewModel;
             }
         }
     }
@@ -217,39 +230,42 @@ namespace Contacts
     {
 
         public RelayCommand AddGroupCommand { get; set; }
-        public RelayCommand DeleteGroupCommand { get; set; }
-        public RelayCommand AddPersonCommand { get; set; }
-        public RelayCommand DeletePersonCommand { get; set; }
-
         public MainWindowViewModel()
         {
             AddGroupCommand = new RelayCommand(AddGroup);
         }
         private void AddGroup()
         {
-            Model.Add(new GroupViewModel()
+            Groups.Add(new GroupViewModel()
             {
                 Name = "test add"
             });
         }
 
-        public ObservableCollection<GroupViewModel> Model { get; set; } = new()
+        public ObservableCollection<GroupViewModel> Groups { get; set; }
+        public ObservableCollection<Group> Model
         {
-            new GroupViewModel() {
-                Name = "test 1",
-                Members = new ObservableCollection<PersonViewModel>()
+            get
+            {
+                ObservableCollection<Group> groups = new ObservableCollection<Group>();
+                foreach(GroupViewModel groupViewModel in Groups )
                 {
-                    new PersonViewModel()
-                    {
-                        Name = "test child_1"
-                    },
-                    new PersonViewModel()
-                    {
-                        Name = "test child_2"
-                    }
+                    Group group = groupViewModel.Model;
+                    groups.Add(group);
                 }
+                return groups;
             }
-        };
-        public ObservableCollection<Group> Group { get; set; }
+            set
+            {
+                ObservableCollection<GroupViewModel> groupsViewModel = new ObservableCollection<GroupViewModel>();
+                foreach(Group group in value)
+                {
+                    GroupViewModel groupViewModel = new GroupViewModel();
+                    groupViewModel.Model = group;
+                    groupsViewModel.Add(groupViewModel);
+                }
+                Groups = groupsViewModel;
+            }
+        }
     }
 }

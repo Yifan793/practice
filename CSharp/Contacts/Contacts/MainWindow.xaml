@@ -27,7 +27,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <TreeView Grid.Row="0" ItemsSource="{Binding Model}"  ContextMenu="{StaticResource TreeViewContextMenu}">
+            <TreeView Grid.Row="0" ItemsSource="{Binding Groups}"  ContextMenu="{StaticResource TreeViewContextMenu}">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type local:GroupViewModel}" ItemsSource="{Binding Members}">
                         <TextBlock Text="{Binding Name}" />
