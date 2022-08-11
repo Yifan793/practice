@@ -18,6 +18,9 @@ using System.Xml;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using LitJson;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Contacts
 {
@@ -29,8 +32,37 @@ namespace Contacts
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = ViewModel;
+            LoadResources("./Resources/data.json");
+        }
 
-            this.DataContext = new MainWindowViewModel();
+        public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
+
+        public void LoadResources(string path)
+        {
+            ObservableCollection<GroupViewModel> groupItems = new ObservableCollection<GroupViewModel>();
+            JsonData data = JsonMapper.ToObject(File.ReadAllText(path));
+            JsonData contactBooks  = data["ContactBooks"];
+            for (int i = 0; i < contactBooks.Count; i++)
+            {
+                GroupViewModel group = new GroupViewModel();
+                group.Name = contactBooks[i]["GroupName"].ToString();
+                JsonData contacts = contactBooks[i]["Contacts"];
+                for (int j = 0; j < contacts.Count; j++)
+                {
+                    PersonViewModel person = new PersonViewModel();
+                    person.Name = contacts[j]["Name"]?.ToString();
+                    person.Number = contacts[j]["Number"]?.ToString();
+                    person.Gender = (bool)contacts[j]["Gender"];
+                    person.Birthday = contacts[j]["Birthday"]?.ToString();
+                    person.Avatar = contacts[j]["Avatar"]?.ToString();
+                    person.Email = contacts[j]["Email"]?.ToString();
+                    person.Notes = contacts[j]["Notes"]?.ToString();
+                    group.Members.Add(person);
+                }
+                groupItems.Add(group);
+            }
+            ViewModel.Model = groupItems;
         }
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -85,24 +117,6 @@ namespace Contacts
         {
 
         }
-
-        //public void AddGroup_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var item = this.tree1.SelectedItem as NodeX;
-        //    if (item != null)
-        //    {
-        //        MessageBox.Show(item.Name.ToString());
-        //    }
-        //}
-
-        //public void DeleteGroup_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var item = this.tree1.selecteditem as nodex;
-        //    if (item != null)
-        //    {
-        //        MessageBox.show(item.name.tostring());
-        //    }
-        //}
     }
 
     public class GroupViewModel : INotifyPropertyChanged
@@ -121,6 +135,25 @@ namespace Contacts
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public Group Model
+        {
+            get
+            {
+                return new Group()
+                {
+                    Name = this.Name,
+                    Members = new ObservableCollection<Person>()
+                    {
+
+                    }
+                };
+            }
+            set
+            {
+                Name = value.Name;
             }
         }
     }
@@ -194,24 +227,13 @@ namespace Contacts
         }
         private void AddGroup()
         {
-            Groups.Add(new GroupViewModel()
+            Model.Add(new GroupViewModel()
             {
                 Name = "test add"
             });
         }
 
-        private string myString = "Overtype this text";
-        public string MyString
-        {
-            get { return myString; }
-            set
-            {
-                myString = value;
-                RaisePropertyChanged();  // implementation of INotifyPropertyChanged is from ViewModelBase
-            }
-        }
-
-        public ObservableCollection<GroupViewModel> Groups { get; set; } = new()
+        public ObservableCollection<GroupViewModel> Model { get; set; } = new()
         {
             new GroupViewModel() {
                 Name = "test 1",
@@ -228,5 +250,6 @@ namespace Contacts
                 }
             }
         };
+        public ObservableCollection<Group> Group { get; set; }
     }
 }

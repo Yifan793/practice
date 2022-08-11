@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Contacts
 {
+    public class Group
+    {
+        public string Name { get; set; }
+        public ObservableCollection<Person> Members { get; set; }
+    }
+
     public class Person
     {
         public string Name { get; set; }
