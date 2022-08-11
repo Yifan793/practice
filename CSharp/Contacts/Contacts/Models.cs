@@ -7,14 +7,22 @@ using System.Threading.Tasks;
 
 namespace Contacts
 {
+    public class Book
+    {
+        public Book()
+        {
+            ContactBooks = new ObservableCollection<Group>();
+        }
+        public ObservableCollection<Group> ContactBooks { get; set; }
+    }
     public class Group
     {
         public Group()
         {
-            Members = new ObservableCollection<Person>();
+            Contacts = new ObservableCollection<Person>();
         }
-        public string Name { get; set; }
-        public ObservableCollection<Person> Members { get; set; }
+        public string GroupName { get; set; }
+        public ObservableCollection<Person> Contacts { get; set; }
     }
 
     public class Person

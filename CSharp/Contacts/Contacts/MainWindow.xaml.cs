@@ -18,8 +18,6 @@ using System.Xml;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using LitJson;
-using System.IO;
 using Newtonsoft.Json;
 
 namespace Contacts
@@ -33,40 +31,10 @@ namespace Contacts
         {
             InitializeComponent();
             this.DataContext = ViewModel;
-            LoadResources("./Resources/data.json");
+            ViewModel.Model = Resource.LoadResource("./Resources/data.json");
         }
 
         public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
-
-        public void LoadResources(string path)
-        {
-            ObservableCollection<Group> groups = new ObservableCollection<Group>();
-            JsonData data = JsonMapper.ToObject(File.ReadAllText(path));
-            JsonData contactBooks  = data["ContactBooks"];
-            for (int i = 0; i < contactBooks.Count; i++)
-            {
-                Group group = new Group();
-                group.Name = contactBooks[i]["GroupName"].ToString();
-                JsonData contacts = contactBooks[i]["Contacts"];
-                for (int j = 0; j < contacts.Count; j++)
-                {
-                    Person person = new Person();
-                    PersonViewModel personViewModel = new PersonViewModel();
-                    person.Name = contacts[j]["Name"]?.ToString();
-                    person.Number = contacts[j]["Number"]?.ToString();
-                    person.Gender = (bool)contacts[j]["Gender"];
-                    person.Birthday = contacts[j]["Birthday"]?.ToString();
-                    person.Avatar = contacts[j]["Avatar"]?.ToString();
-                    person.Email = contacts[j]["Email"]?.ToString();
-                    person.Notes = contacts[j]["Notes"]?.ToString();
-
-                    personViewModel.Model = person;
-                    group.Members.Add(person);
-                }
-                groups.Add(group);
-            }
-            ViewModel.Model = groups;
-        }
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -126,11 +94,11 @@ namespace Contacts
     {
         public GroupViewModel()
         {
-            Members = new ObservableCollection<PersonViewModel>();
+            Contacts = new ObservableCollection<PersonViewModel>();
         }
-        private string _name;
-        public string Name { get { return _name; } set { _name = value; OnPropertyChanged(); } }
-        public ObservableCollection<PersonViewModel> Members { get; set; }
+        private string _groupname;
+        public string GroupName { get { return _groupname; } set { _groupname = value; OnPropertyChanged(); } }
+        public ObservableCollection<PersonViewModel> Contacts { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] String propertyName = "")
@@ -146,27 +114,27 @@ namespace Contacts
             get
             {
                 Group group = new Group();
-                group.Name = this.Name;
+                group.GroupName = this.GroupName;
                 ObservableCollection<Person> people = new ObservableCollection<Person>();
-                foreach (PersonViewModel personViewModel in Members)
+                foreach (PersonViewModel personViewModel in Contacts)
                 {
                     Person person = personViewModel.Model;
                     people.Add(person);
                 }
-                group.Members = people;
+                group.Contacts = people;
                 return group;
             }
             set
             {
-                Name = value.Name;
+                GroupName = value.GroupName;
                 ObservableCollection<PersonViewModel> peopleViewModel = new ObservableCollection<PersonViewModel>();
-                foreach(Person person in value.Members)
+                foreach(Person person in value.Contacts)
                 {
                     PersonViewModel personViewModel = new PersonViewModel();
                     personViewModel.Model = person;
                     peopleViewModel.Add(personViewModel);
                 }
-                Members = peopleViewModel;
+                Contacts = peopleViewModel;
             }
         }
     }
@@ -238,27 +206,30 @@ namespace Contacts
         {
             Groups.Add(new GroupViewModel()
             {
-                Name = "test add"
+                GroupName = "test add"
             });
         }
 
         public ObservableCollection<GroupViewModel> Groups { get; set; }
-        public ObservableCollection<Group> Model
+        public Book Model
         {
             get
             {
+                Book book = new Book();
                 ObservableCollection<Group> groups = new ObservableCollection<Group>();
                 foreach(GroupViewModel groupViewModel in Groups )
                 {
                     Group group = groupViewModel.Model;
                     groups.Add(group);
                 }
-                return groups;
+                book.ContactBooks = groups;
+                return book;
             }
             set
             {
+                ObservableCollection<Group> groups = value.ContactBooks;
                 ObservableCollection<GroupViewModel> groupsViewModel = new ObservableCollection<GroupViewModel>();
-                foreach(Group group in value)
+                foreach(Group group in groups)
                 {
                     GroupViewModel groupViewModel = new GroupViewModel();
                     groupViewModel.Model = group;

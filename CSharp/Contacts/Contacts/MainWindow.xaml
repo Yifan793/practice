@@ -29,8 +29,8 @@
             </Grid.RowDefinitions>
             <TreeView Grid.Row="0" ItemsSource="{Binding Groups}"  ContextMenu="{StaticResource TreeViewContextMenu}">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:GroupViewModel}" ItemsSource="{Binding Members}">
-                        <TextBlock Text="{Binding Name}" />
+                    <HierarchicalDataTemplate DataType="{x:Type local:GroupViewModel}" ItemsSource="{Binding Contacts}">
+                        <TextBlock Text="{Binding GroupName}" />
                     </HierarchicalDataTemplate>
                     <DataTemplate DataType="{x:Type local:PersonViewModel}">
                         <TextBlock Text="{Binding Name}" />
