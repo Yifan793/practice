@@ -1,0 +1,110 @@
+{
+  "ContactBooks": [
+    {
+      "GroupName": "倚天屠龙记",
+      "Contacts": [
+        {
+          "Name": "张三丰",
+          "Number": "13000008888",
+          "Gender": true,
+          "Birthday": "1900-08-13T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-sanfeng.jpg",
+          "Email": "zhangsanfeng@wudang.com",
+          "Notes": "武当派创始人\n倚天屠龙第一人"
+        },
+        {
+          "Name": "赵敏",
+          "Number": "13123456789",
+          "Gender": true,
+          "Birthday": "1998-04-19T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-zhaomin.jpg",
+          "Email": "zhaomin@yuandynasty.com",
+          "Notes": "邵敏郡主\n女主角"
+        },
+        {
+          "Name": "张无忌",
+          "Number": "13288886666",
+          "Gender": true,
+          "Birthday": "1997-08-01T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-wuji.jpg",
+          "Email": "zhangwuji@ming.com",
+          "Notes": "明教教主\n男主角"
+        }
+      ]
+    },
+    {
+      "GroupName": "射雕英雄传",
+      "Contacts": [
+        {
+          "Name": "郭靖",
+          "Number": "18866668888",
+          "Gender": true,
+          "Birthday": "1912-01-01T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-guojing.jpg",
+          "Email": "guojing@taohuaisland.com",
+          "Notes": "新五绝第一人"
+        },
+        {
+          "Name": "黄蓉",
+          "Number": "18988888888",
+          "Gender": true,
+          "Birthday": "1915-10-10T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-huangrong.jpg",
+          "Email": "huangrong@taohuaisland.com",
+          "Notes": "五绝黄药师之女\n女主角"
+        }
+      ]
+    },
+    {
+      "GroupName": "神雕侠侣",
+      "Contacts": [
+        {
+          "Name": "杨过",
+          "Number": "13999991111",
+          "Gender": true,
+          "Birthday": "1942-11-11T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-yangguo.jpg",
+          "Email": "yangguo@gumu.com",
+          "Notes": "杨康之子"
+        },
+        {
+          "Name": "小龙女",
+          "Number": "11122223333",
+          "Gender": true,
+          "Birthday": "1900-01-01T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-default.jpg",
+          "Email": "xiaolongnv@gumu.com",
+          "Notes": "杨过之妻"
+        }
+      ]
+    },
+    {
+      "GroupName": "新分组",
+      "Contacts": [
+        {
+          "Name": "易中天",
+          "Number": "13000001111",
+          "Gender": true,
+          "Birthday": "1900-01-01T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-default.jpg",
+          "Email": "123213",
+          "Notes": "123123"
+        }
+      ]
+    },
+    {
+      "GroupName": "新通讯录分组03",
+      "Contacts": [
+        {
+          "Name": "新通讯录01",
+          "Number": null,
+          "Gender": true,
+          "Birthday": "1900-01-01T00:00:00",
+          "Avatar": "pack://application:,,,/Resources/avatar-default.jpg",
+          "Email": null,
+          "Notes": null
+        }
+      ]
+    }
+  ]
+}
