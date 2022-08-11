@@ -11,18 +11,19 @@ namespace Contacts
     {
         public Book()
         {
-            ContactBooks = new ObservableCollection<Group>();
+            ContactBooks = new List<Group>();
         }
-        public ObservableCollection<Group> ContactBooks { get; set; }
+        public List<Group> ContactBooks { get; set; }
     }
+
     public class Group
     {
         public Group()
         {
-            Contacts = new ObservableCollection<Person>();
+            Contacts = new List<Person>();
         }
         public string GroupName { get; set; }
-        public ObservableCollection<Person> Contacts { get; set; }
+        public List<Person> Contacts { get; set; }
     }
 
     public class Person

@@ -15,7 +15,7 @@
         {
           "Name": "赵敏",
           "Number": "13123456789",
-          "Gender": true,
+          "Gender": false,
           "Birthday": "1998-04-19T00:00:00",
           "Avatar": "pack://application:,,,/Resources/avatar-zhaomin.jpg",
           "Email": "zhaomin@yuandynasty.com",

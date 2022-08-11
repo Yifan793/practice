@@ -7,9 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
+        <local:NegateBooleanConverter x:Key="inverter"/>
+        <local:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter"/>
         <ContextMenu x:Key="TreeViewContextMenu">
-            <MenuItem Name="Add" Header="添加"/>
-            <MenuItem Name="Delete" Header="删除"/>
+            <MenuItem Name="Add" Header="添加" Click="OnAddGroupButtonClick"/>
+            <MenuItem Name="Delete" Header="删除" Click="OnDeleteGroupButtonClick"/>
         </ContextMenu>
     </Window.Resources>
     <Grid>
@@ -27,7 +29,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <TreeView Grid.Row="0" ItemsSource="{Binding Groups}"  ContextMenu="{StaticResource TreeViewContextMenu}">
+            <TreeView Name="treeView" Grid.Row="0" ItemsSource="{Binding Groups}"  ContextMenu="{StaticResource TreeViewContextMenu}">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type local:GroupViewModel}" ItemsSource="{Binding Contacts}">
                         <TextBlock Text="{Binding GroupName}" />
@@ -38,13 +40,12 @@
                 </TreeView.Resources>
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
-                        <EventSetter Event="PreviewMouseRightButtonDown" Handler="OnPreviewMouseRightButtonDown" />
                         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnPreviewMouseLeftButtonDown"/>
                     </Style>
                 </TreeView.ItemContainerStyle>
             </TreeView>
-            <Button Width="120" Height="35" Content="Add" Command="{Binding AddGroupCommand}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-            <Button Width="120" Height="35" Content="Delete" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="Button_Click"/>
+            <Button Width="120" Height="35" Content="Add" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="OnAddPersonButtonClick" />
+            <Button Width="120" Height="35" Content="Delete" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="OnDeletePersonButtonClick" IsEnabled="{Binding ClickPerson}"/>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
@@ -57,25 +58,25 @@
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
                 <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Image Width="150" Height="200"/>
+                    <Image Width="150" Height="200" Source="{Binding CurViewModel.Avatar, Converter={StaticResource UrlToImageSourceConverter}}"/>
                 </WrapPanel>
                 <WrapPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <WrapPanel Margin="0 20 0 20">
                         <TextBlock Text="姓名：" Margin="0 0 20 0"/>
-                        <TextBox Width="200"/>
+                        <TextBox Width="200" Text="{Binding CurViewModel.Name}"/>
                     </WrapPanel>
-                    <WrapPanel Margin="0 10 0 10">
-                        <TextBlock Text="号码：" Margin="0 10 20 10"/>
-                        <TextBox Width="200" Height="25"/>
+                    <WrapPanel Margin="0 20 0 20">
+                        <TextBlock Text="号码：" Margin="0 0 20 0"/>
+                        <TextBox Width="200" Text="{Binding CurViewModel.Number}"/>
                     </WrapPanel>
                     <WrapPanel Margin="0 10 0 10">
                         <TextBlock Text="性别：" Margin="0 10 20 10"/>
-                        <RadioButton VerticalAlignment="Center" GroupName="gender" Content="男" Width="50"/>
-                        <RadioButton VerticalAlignment="Center" GroupName="gender" Content="女"/>
+                        <RadioButton VerticalAlignment="Center" GroupName="gender" Content="男" Width="50" IsChecked="{Binding CurViewModel.Gender}"/>
+                        <RadioButton VerticalAlignment="Center" GroupName="gender" Content="女" IsChecked="{Binding CurViewModel.Gender, Converter={StaticResource inverter}}"/>
                     </WrapPanel>
                     <WrapPanel Margin="0 10 0 10">
                         <TextBlock Text="生日：" Margin="0 10 20 10"/>
-                        <DatePicker VerticalAlignment="Center" Width="200"/>
+                        <DatePicker VerticalAlignment="Center" Width="200" SelectedDate="{Binding CurViewModel.Birthday}"/>
                     </WrapPanel>
                 </WrapPanel>
             </Grid>
@@ -89,8 +90,8 @@
                     <TextBlock Text="备注：" Margin="0 20 0 20" TextAlignment="right"/>
                 </WrapPanel>
                 <WrapPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
-                    <TextBox Width="200"/>
-                    <TextBox Width="200" Height="40" Margin="0 15 0 0"/>
+                    <TextBox Width="200" Text="{Binding CurViewModel.Email}"/>
+                    <TextBox Width="200" Text="{Binding CurViewModel.Notes}" Height="40" Margin="0 15 0 0"/>
                 </WrapPanel>
             </Grid>
         </Grid>

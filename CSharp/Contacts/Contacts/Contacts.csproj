@@ -9,6 +9,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\avatar-default.jpg" />
+    <None Remove="Resources\avatar-guojing.jpg" />
+    <None Remove="Resources\avatar-huangrong.jpg" />
+    <None Remove="Resources\avatar-sanfeng.jpg" />
+    <None Remove="Resources\avatar-wuji.jpg" />
+    <None Remove="Resources\avatar-yangguo.jpg" />
+    <None Remove="Resources\avatar-zhaomin.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\avatar-default.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\avatar-guojing.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\avatar-huangrong.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\avatar-sanfeng.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\avatar-wuji.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\avatar-yangguo.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\avatar-zhaomin.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="4.0.210" />
     <PackageReference Include="LitJson" Version="0.18.0" />
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
@@ -16,27 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\avatar-default.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\avatar-guojing.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\avatar-huangrong.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\avatar-sanfeng.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\avatar-wuji.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\avatar-yangguo.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\avatar-zhaomin.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -19,6 +19,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
+using Caliburn.Micro;
 
 namespace Contacts
 {
@@ -36,6 +37,9 @@ namespace Contacts
 
         public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
 
+        /**
+         * @brief 左键点击树
+         */
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DependencyObject obj = e.OriginalSource as DependencyObject;
@@ -44,30 +48,14 @@ namespace Contacts
             {
                 return;
             }
-            if(item.Header is GroupViewModel)
-            {
-                Console.WriteLine("group");
-            }
-            else if (item.Header is PersonViewModel)
-            {
-                Console.WriteLine("Person");
-            }
-        }
-        private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            DependencyObject obj = e.OriginalSource as DependencyObject;
-            TreeViewItem item = GetDependencyObjectFromVisualTree(obj, typeof(TreeViewItem)) as TreeViewItem;
-            if (item == null)
-            {
-                return;
-            }
+            ViewModel.CurViewModel = (ViewModelBase)item.DataContext;
             if (item.Header is GroupViewModel)
             {
-                Console.WriteLine("group");
+                ViewModel.ClickPerson = false;
             }
             else if (item.Header is PersonViewModel)
             {
-                Console.WriteLine("Person");
+                ViewModel.ClickPerson = true;
             }
         }
         private static DependencyObject GetDependencyObjectFromVisualTree(
@@ -84,30 +72,102 @@ namespace Contacts
             return parent;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /**
+         * @brief 右键添加按钮，添加分组
+         */
+        private void OnAddGroupButtonClick(object sender, RoutedEventArgs e)
         {
+            ViewModel.Groups.Add(new GroupViewModel()
+            {
+                GroupName = "新分组"
+            });
+        }
 
+        /**
+         * @brief 右键删除按钮，删除分组
+         */
+        private void OnDeleteGroupButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurViewModel == null)
+            {
+                MessageBox.Show("请选中一个分组", "", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
+                return;
+            }
+            if (ViewModel.CurViewModel is GroupViewModel group)
+            {
+                ViewModel.Groups.Remove(group);
+            }
+        }
+
+        /**
+         * @brief 点击Add按钮，添加用户
+         */
+        private void OnAddPersonButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurViewModel == null)
+            {
+                MessageBox.Show("请选中一个分组", "", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
+                return;
+            }
+            if (ViewModel.CurViewModel is GroupViewModel group)
+            {
+                group.Contacts.Add(new PersonViewModel()
+                {
+                    Name = "未命名",
+                    ParentGroup = group
+                });
+            }
+            else if (ViewModel.CurViewModel is PersonViewModel person)
+            {
+                GroupViewModel parentGroup = person.ParentGroup;
+                parentGroup.Contacts.Add(new PersonViewModel()
+                {
+                    Name = "未命名",
+                    ParentGroup = parentGroup
+                });
+            }
+        }
+
+        /**
+         * @brief 点击Delete按钮，删除用户
+         */
+        private void OnDeletePersonButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurViewModel == null)
+            {
+                return;
+            }
+            if (ViewModel.CurViewModel is PersonViewModel person)
+            {
+                GroupViewModel parentGroup = person.ParentGroup;
+                parentGroup.Contacts.Remove(person);
+            }
         }
     }
 
-    public class GroupViewModel : INotifyPropertyChanged
+    public class GroupViewModel : ViewModelBase
     {
         public GroupViewModel()
         {
             Contacts = new ObservableCollection<PersonViewModel>();
         }
         private string _groupname;
-        public string GroupName { get { return _groupname; } set { _groupname = value; OnPropertyChanged(); } }
-        public ObservableCollection<PersonViewModel> Contacts { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
+        public string GroupName { 
+            get 
+            { 
+                return _groupname; 
+            } 
+            set 
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+                if (value == _groupname)
+                {
+                    return;
+                }
+                _groupname = value; 
+                RaisePropertyChanged(); 
+            } 
         }
+        public ObservableCollection<PersonViewModel> Contacts { get; set; }
 
         public Group Model
         {
@@ -115,7 +175,7 @@ namespace Contacts
             {
                 Group group = new Group();
                 group.GroupName = this.GroupName;
-                ObservableCollection<Person> people = new ObservableCollection<Person>();
+                List<Person> people = new List<Person>();
                 foreach (PersonViewModel personViewModel in Contacts)
                 {
                     Person person = personViewModel.Model;
@@ -128,10 +188,11 @@ namespace Contacts
             {
                 GroupName = value.GroupName;
                 ObservableCollection<PersonViewModel> peopleViewModel = new ObservableCollection<PersonViewModel>();
-                foreach(Person person in value.Contacts)
+                foreach (Person person in value.Contacts)
                 {
                     PersonViewModel personViewModel = new PersonViewModel();
                     personViewModel.Model = person;
+                    personViewModel.ParentGroup = this;
                     peopleViewModel.Add(personViewModel);
                 }
                 Contacts = peopleViewModel;
@@ -139,23 +200,126 @@ namespace Contacts
         }
     }
 
-    public class PersonViewModel : INotifyPropertyChanged
+    public class PersonViewModel : ViewModelBase
     {
         private string _name;
-        public string Name { get { return _name; } set { _name = value; OnPropertyChanged(); } }
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (value == _name)
+                {
+                    return;
+                }
+                _name = value;
+                RaisePropertyChanged();
+            }
+        }
         private string _number;
-        public string Number { get { return _number; } set { _number = value; OnPropertyChanged(); } }
+        public string Number 
+        { 
+            get 
+            { 
+                return _number; 
+            } 
+            set 
+            {
+                if (value == _number)
+                {
+                    return;
+                }
+                _number = value; 
+                RaisePropertyChanged(); 
+            } 
+        }
         private bool _gender;
-        public bool Gender { get { return _gender; } set { _gender = value; OnPropertyChanged(); } }
+        public bool Gender { 
+            get 
+            { 
+                return _gender; 
+            } 
+            set 
+            {
+                if (value == _gender)
+                {
+                    return;
+                }
+                _gender = value; 
+                RaisePropertyChanged(); 
+            } 
+        }
         private string _birthday;
-        public string Birthday { get { return _birthday; } set { _birthday = value; OnPropertyChanged(); } }
+        public string Birthday { 
+            get 
+            { 
+                return _birthday; 
+            } 
+            set 
+            {
+                if (value == _birthday)
+                {
+                    return;
+                }
+                _birthday = value; 
+                RaisePropertyChanged(); 
+            } 
+        }
         private string _avatar;
-        public string Avatar { get { return _avatar; } set { _avatar = value; OnPropertyChanged(); } }
+        public string Avatar 
+        { 
+            get 
+            {
+                return _avatar; 
+            } 
+            set 
+            {
+                if (value == _avatar)
+                {
+                    return;
+                }
+                _avatar = value; 
+                RaisePropertyChanged(); 
+            } 
+        }
         private string _email;
-        public string Email { get { return _email; } set { _email = value; OnPropertyChanged(); } }
+        public string Email 
+        { 
+            get 
+            { 
+                return _email; 
+            } 
+            set 
+            {
+                if (value == _email)
+                {
+                    return;
+                }
+                _email = value; 
+                RaisePropertyChanged(); 
+            } 
+        }
         private string _notes;
-        public string Notes { get { return _notes; } set { _notes = value; OnPropertyChanged(); } }
-        public bool Visible { get; set; }
+        public string Notes 
+        { 
+            get 
+            { 
+                return _notes; 
+            } 
+            set 
+            {
+                if (value == _notes)
+                {
+                    return;
+                }
+                _notes = value; 
+                RaisePropertyChanged(); 
+            } 
+        }
+        public GroupViewModel ParentGroup { get; set; }
 
         public Person Model
         {
@@ -183,41 +347,52 @@ namespace Contacts
                 Notes = value.Notes;
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 
     public class MainWindowViewModel : ViewModelBase
     {
-
-        public RelayCommand AddGroupCommand { get; set; }
-        public MainWindowViewModel()
-        {
-            AddGroupCommand = new RelayCommand(AddGroup);
-        }
-        private void AddGroup()
-        {
-            Groups.Add(new GroupViewModel()
+        private bool _clickperson = false;
+        public bool ClickPerson
+        { 
+            get
             {
-                GroupName = "test add"
-            });
+                return _clickperson;
+            }
+            set
+            {
+                if (value == _clickperson)
+                {
+                    return;
+                }
+                _clickperson = value;
+                RaisePropertyChanged();
+            }
         }
-
+        private ViewModelBase _curViewModel;
+        public ViewModelBase CurViewModel 
+        { 
+            get
+            {
+                return _curViewModel;
+            }
+            set
+            {
+                if (_curViewModel == value)
+                {
+                    return;
+                }
+                _curViewModel = value;
+                RaisePropertyChanged();
+            } 
+        }
         public ObservableCollection<GroupViewModel> Groups { get; set; }
         public Book Model
         {
             get
             {
                 Book book = new Book();
-                ObservableCollection<Group> groups = new ObservableCollection<Group>();
-                foreach(GroupViewModel groupViewModel in Groups )
+                List<Group> groups = new List<Group>();
+                foreach (GroupViewModel groupViewModel in Groups)
                 {
                     Group group = groupViewModel.Model;
                     groups.Add(group);
@@ -227,9 +402,9 @@ namespace Contacts
             }
             set
             {
-                ObservableCollection<Group> groups = value.ContactBooks;
+                List<Group> groups = value.ContactBooks;
                 ObservableCollection<GroupViewModel> groupsViewModel = new ObservableCollection<GroupViewModel>();
-                foreach(Group group in groups)
+                foreach (Group group in groups)
                 {
                     GroupViewModel groupViewModel = new GroupViewModel();
                     groupViewModel.Model = group;
@@ -237,6 +412,31 @@ namespace Contacts
                 }
                 Groups = groupsViewModel;
             }
+        }
+    }
+
+    public class NegateBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+    }
+
+    public class UrlToImageSourceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return new BitmapImage(new Uri(value.ToString()));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
