@@ -1,0 +1,101 @@
+﻿<Window x:Class="Contacts.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Contacts"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <ContextMenu x:Key="TreeViewContextMenu">
+            <MenuItem Name="Add" Header="添加"/>
+            <MenuItem Name="Delete" Header="删除"/>
+        </ContextMenu>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="22"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="500"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Grid.Column="0" Margin="20 0 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <TreeView Grid.Row="0" ItemsSource="{Binding Groups}"  ContextMenu="{StaticResource TreeViewContextMenu}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:GroupNodeItem}" ItemsSource="{Binding Members}">
+                        <TextBlock Text="{Binding Name}" />
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type local:PersonNodeItem}">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </TreeView.Resources>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <EventSetter Event="PreviewMouseRightButtonDown" Handler="OnPreviewMouseRightButtonDown" />
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnPreviewMouseLeftButtonDown"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+            <Button Width="120" Height="35" Content="Add" Command="{Binding AddGroupCommand}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+            <Button Width="120" Height="35" Content="Delete" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="250"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
+                <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Image Width="150" Height="200"/>
+                </WrapPanel>
+                <WrapPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <WrapPanel Margin="0 20 0 20">
+                        <TextBlock Text="姓名：" Margin="0 0 20 0"/>
+                        <TextBox Width="200"  Text="{Binding MyString}"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0 10 0 10">
+                        <TextBlock Text="号码：" Margin="0 10 20 10"/>
+                        <TextBox Width="200" Height="25"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0 10 0 10">
+                        <TextBlock Text="性别：" Margin="0 10 20 10"/>
+                        <RadioButton VerticalAlignment="Center" GroupName="gender" Content="男" Width="50"/>
+                        <RadioButton VerticalAlignment="Center" GroupName="gender" Content="女"/>
+                    </WrapPanel>
+                    <WrapPanel Margin="0 10 0 10">
+                        <TextBlock Text="生日：" Margin="0 10 20 10"/>
+                        <DatePicker VerticalAlignment="Center" Width="200"/>
+                    </WrapPanel>
+                </WrapPanel>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="300"/>
+                </Grid.ColumnDefinitions>
+                <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="邮箱地址："  TextAlignment="right"/>
+                    <TextBlock Text="备注：" Margin="0 20 0 20" TextAlignment="right"/>
+                </WrapPanel>
+                <WrapPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
+                    <TextBox Width="200"/>
+                    <TextBox Width="200" Height="40" Margin="0 15 0 0"/>
+                </WrapPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
