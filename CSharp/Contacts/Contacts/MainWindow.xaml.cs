@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Caliburn.Micro;
+using System.Globalization;
 
 namespace Contacts
 {
@@ -42,8 +43,7 @@ namespace Contacts
          */
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DependencyObject obj = e.OriginalSource as DependencyObject;
-            TreeViewItem item = GetDependencyObjectFromVisualTree(obj, typeof(TreeViewItem)) as TreeViewItem;
+            var item = sender as TreeViewItem;
             if (item == null)
             {
                 return;
@@ -57,19 +57,6 @@ namespace Contacts
             {
                 ViewModel.ClickPerson = true;
             }
-        }
-        private static DependencyObject GetDependencyObjectFromVisualTree(
-            DependencyObject startObject,
-            Type type)
-        {
-            var parent = startObject;
-            while (parent != null)
-            {
-                if (type.IsInstanceOfType(parent))
-                    break;
-                parent = VisualTreeHelper.GetParent(parent);
-            }
-            return parent;
         }
 
         /**
@@ -114,6 +101,7 @@ namespace Contacts
                 group.Contacts.Add(new PersonViewModel()
                 {
                     Name = "未命名",
+                    Avatar = "pack://application:,,,/Resources/avatar-default.jpg",
                     ParentGroup = group
                 });
             }
@@ -123,6 +111,7 @@ namespace Contacts
                 parentGroup.Contacts.Add(new PersonViewModel()
                 {
                     Name = "未命名",
+                    Avatar = "pack://application:,,,/Resources/avatar-default.jpg",
                     ParentGroup = parentGroup
                 });
             }
@@ -427,10 +416,40 @@ namespace Contacts
         }
     }
 
+    public class PersonVisibleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? "Visible" : "Hidden";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class GroupVisibleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? "Hidden" : "Visible";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
     public class UrlToImageSourceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null)
+            {
+                return null;
+            }
             return new BitmapImage(new Uri(value.ToString()));
         }
 

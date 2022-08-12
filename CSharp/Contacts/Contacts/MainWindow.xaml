@@ -9,6 +9,8 @@
     <Window.Resources>
         <local:NegateBooleanConverter x:Key="inverter"/>
         <local:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter"/>
+        <local:PersonVisibleConverter x:Key="PersonVisibleConverter"/>
+        <local:GroupVisibleConverter x:Key="GroupVisibleConverter"/>
         <ContextMenu x:Key="TreeViewContextMenu">
             <MenuItem Name="Add" Header="添加" Click="OnAddGroupButtonClick"/>
             <MenuItem Name="Delete" Header="删除" Click="OnDeleteGroupButtonClick"/>
@@ -52,7 +54,19 @@
                 <RowDefinition Height="250"/>
                 <RowDefinition Height="150"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Visibility="{Binding ClickPerson, Converter={StaticResource GroupVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <WrapPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <WrapPanel Margin="0 20 0 20">
+                        <TextBlock Text="名称：" Margin="0 0 20 0"/>
+                        <TextBox Width="200" Text="{Binding CurViewModel.GroupName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </WrapPanel>
+                </WrapPanel>
+            </Grid>
+            <Grid Grid.Row="0" Visibility="{Binding ClickPerson, Converter={StaticResource PersonVisibleConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="300"/>
@@ -63,11 +77,11 @@
                 <WrapPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <WrapPanel Margin="0 20 0 20">
                         <TextBlock Text="姓名：" Margin="0 0 20 0"/>
-                        <TextBox Width="200" Text="{Binding CurViewModel.Name}"/>
+                        <TextBox Width="200" Text="{Binding CurViewModel.Name, UpdateSourceTrigger=PropertyChanged}"/>
                     </WrapPanel>
                     <WrapPanel Margin="0 20 0 20">
                         <TextBlock Text="号码：" Margin="0 0 20 0"/>
-                        <TextBox Width="200" Text="{Binding CurViewModel.Number}"/>
+                        <TextBox Width="200" Text="{Binding CurViewModel.Number, UpdateSourceTrigger=PropertyChanged}"/>
                     </WrapPanel>
                     <WrapPanel Margin="0 10 0 10">
                         <TextBlock Text="性别：" Margin="0 10 20 10"/>
@@ -80,7 +94,7 @@
                     </WrapPanel>
                 </WrapPanel>
             </Grid>
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Visibility="{Binding ClickPerson, Converter={StaticResource PersonVisibleConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="300"/>
@@ -90,8 +104,8 @@
                     <TextBlock Text="备注：" Margin="0 20 0 20" TextAlignment="right"/>
                 </WrapPanel>
                 <WrapPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
-                    <TextBox Width="200" Text="{Binding CurViewModel.Email}"/>
-                    <TextBox Width="200" Text="{Binding CurViewModel.Notes}" Height="40" Margin="0 15 0 0"/>
+                    <TextBox Width="200" Text="{Binding CurViewModel.Email, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Width="200" Text="{Binding CurViewModel.Notes, UpdateSourceTrigger=PropertyChanged}" Height="40" Margin="0 15 0 0"/>
                 </WrapPanel>
             </Grid>
         </Grid>
