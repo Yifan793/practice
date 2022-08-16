@@ -16,14 +16,26 @@ namespace AssemblyViewer
     {
         public ViewModelObject()
         {
+            FontBrush = new SolidColorBrush(Colors.White);
             ChildList = new List<ViewModelObject>();
         }
         public string Name { get; set; }
-        public AccessRight AccessRights { get; set; }
-        public string Icon { get; set; }
+        public AccessRights AccessRights { get; set; }
+        public string Icon
+        {
+            get
+            {
+                string access = "";
+                if (AccessRights != AccessRights.InValid)
+                {
+                    access = AccessRights.ToString();
+                }
+                return "pack://application:,,,/Images/" + Type.ToString() + access + ".16.16.png";
+            }
+        }
         public ViewerType Type { get; set; }
-        public List<ViewModelObject> ChildList { get; set; }
         public SolidColorBrush FontBrush { get; set; }
+        public List<ViewModelObject> ChildList { get; set; }
         public ModelObject Model
         {
             get
@@ -59,7 +71,7 @@ namespace AssemblyViewer
 
         public int CompareTo(ViewModelObject other)
         {
-            return other.Name.CompareTo(Name);
+            return this.Name.CompareTo(other.Name);
         }
     }
 
@@ -68,6 +80,8 @@ namespace AssemblyViewer
         public ViewModelNameSpace()
         {
             FontBrush = new SolidColorBrush(Colors.Gold);
+            Type = ViewerType.Namespace;
+            AccessRights = AccessRights.InValid;
         }
     }
 
@@ -75,11 +89,21 @@ namespace AssemblyViewer
 
     public class ViewModelBaseClass : ViewModelObject
     {
-        public List<ViewModelBaseClass> DerivedList { get; set; }
+        public ViewModelBaseClass()
+        {
+            MethodList = new List<ViewModelMethod>();
+            PropertyList = new List<ViewModelProperty>();
+            EventList = new List<ViewModelEvent>();
+            FieldList = new List<ViewModelField>();
+        }
         public ViewModelBaseClass BaseClass { get; set; }
+
         public List<ViewModelMethod> MethodList { get; set; }
-        public List<ViewModelProperty> PropertyList { get; set; }
         public List<ViewModelEvent> EventList { get; set; }
+        public List<ViewModelProperty> PropertyList { get; set; }
+        public List<ViewModelField> FieldList { get; set; }
+        public List<ViewModelBaseClass> DerivedList { get; set; }
+
         public ModelBaseClass Model
         {
             get
@@ -175,6 +199,7 @@ namespace AssemblyViewer
         public ViewModelInterface()
         {
             FontBrush = new SolidColorBrush(Colors.DarkGray);
+            Type = ViewerType.Interface;
         }
     }
 
@@ -183,6 +208,7 @@ namespace AssemblyViewer
         public ViewModelClass()
         {
             FontBrush = new SolidColorBrush(Colors.MediumTurquoise);
+            Type = ViewerType.Class;
         }
     }
 
@@ -191,6 +217,7 @@ namespace AssemblyViewer
         public ViewModelEnum()
         {
             FontBrush = new SolidColorBrush(Colors.LightGreen);
+            Type = ViewerType.Enumeration;
         }
     }
 
@@ -199,6 +226,7 @@ namespace AssemblyViewer
         public ViewModelStruct()
         {
             FontBrush = new SolidColorBrush(Colors.LimeGreen);
+            Type = ViewerType.Structure;
         }
     }
 
@@ -209,6 +237,7 @@ namespace AssemblyViewer
         public ViewModelMethod()
         {
             FontBrush = new SolidColorBrush(Colors.Orange);
+            Type = ViewerType.Method;
         }
     }
     public class ViewModelEvent : ViewModelObject
@@ -216,6 +245,7 @@ namespace AssemblyViewer
         public ViewModelEvent()
         {
             FontBrush = new SolidColorBrush(Colors.LightPink);
+            Type = ViewerType.Event;
         }
     }
 
@@ -224,6 +254,7 @@ namespace AssemblyViewer
         public ViewModelProperty()
         {
             FontBrush = new SolidColorBrush(Colors.DarkCyan);
+            Type = ViewerType.Property;
         }
     }
     public class ViewModelField : ViewModelObject
@@ -231,6 +262,7 @@ namespace AssemblyViewer
         public ViewModelField()
         {
             FontBrush = new SolidColorBrush(Colors.MediumPurple);
+            Type = ViewerType.Field;
         }
     }
 

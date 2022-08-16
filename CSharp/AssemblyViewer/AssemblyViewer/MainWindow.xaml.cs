@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Reflection;
 using System.IO;
+using System.Collections;
 
 namespace AssemblyViewer
 {
@@ -61,7 +62,7 @@ namespace AssemblyViewer
     {
         public MainWindowViewModel()
         {
-            NameSpaecList = new List<ViewModelNameSpace>();
+            NameSpaecList = new List<ViewModelObject>();
         }
         private string _filename;
         public string FileName
@@ -82,7 +83,7 @@ namespace AssemblyViewer
                 DealAssembly(assembly);
             }
         }
-        public List<ViewModelNameSpace> NameSpaecList { get; set; }
+        public List<ViewModelObject> NameSpaecList { get; set; }
 
         public void DealAssembly(Assembly assembly)
         {
@@ -103,6 +104,7 @@ namespace AssemblyViewer
                 {
                     vmBase = new ViewModelEnum();
                     vmBase.Name = type.Name;
+                    vmBase.Type = ViewerType.Enumeration;
                     string[] enums = type.GetEnumNames();
                     foreach (string enumName in enums)
                     {
@@ -128,14 +130,15 @@ namespace AssemblyViewer
                     if (vmBase != null)
                     {
                         vmBase.Name = type.Name;
-                        vmBase.ChildList.AddRange(DealMethods(type));
-                        vmBase.ChildList.AddRange(DealEvents(type));
-                        vmBase.ChildList.AddRange(DealProperties(type));
-                        vmBase.ChildList.AddRange(DealFields(type));
+                        vmBase.MethodList.AddRange(Util.DealMethods(type));
+                        vmBase.EventList.AddRange(Util.DealEvents(type));
+                        vmBase.PropertyList.AddRange(Util.DealProperties(type));
+                        vmBase.FieldList.AddRange(Util.DealFields(type));
                     }
                 }
                 if (vmBase != null)
                 {
+                    vmBase.AccessRights = Util.getAccessibility(type);
                     bs[type.Name] = vmBase;
                     if (type.DeclaringType != null && bs[type.DeclaringType.Name] != null)
                     {
@@ -147,76 +150,49 @@ namespace AssemblyViewer
                     }
                 }
             }
+            Util.SortAll(NameSpaecList);
+        }
+    }
+
+    public class CompositeCollectionConverter : IMultiValueConverter
+    {
+
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var res = new CompositeCollection();
+            foreach (var item in values)
+            {
+                if (item is IEnumerable && item != null)
+                {
+                    res.Add(new CollectionContainer()
+                    {
+                        Collection = item as IEnumerable
+                    });
+                }
+            }
+            return res;
         }
 
-        private List<ViewModelMethod> DealMethods(Type type)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            MethodInfo[] methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            List<ViewModelMethod> methodList = new List<ViewModelMethod>();
-            foreach(MethodInfo method in methods)
-            {
-                Type declaringType = method.DeclaringType;
-                if (!declaringType.Name.EndsWith(type.Name) || method.IsSpecialName)
-                {
-                    continue;
-                }
-                ViewModelMethod vmMethod = new ViewModelMethod();
-                vmMethod.Name = method.Name;
-                methodList.Add(vmMethod);
-            }
-            return methodList;
+            throw new NotImplementedException();
         }
-        private List<ViewModelEvent> DealEvents(Type type)
+    }
+
+    public class UrlToImageSourceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            EventInfo[] eventInfos = type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            List<ViewModelEvent> eventList = new List<ViewModelEvent>();
-            foreach (EventInfo eventInfo in eventInfos)
+            if (value == null)
             {
-                Type declaringType = eventInfo.DeclaringType;
-                if (!declaringType.Name.EndsWith(type.Name))
-                {
-                    continue;
-                }
-                ViewModelEvent vmEvent = new ViewModelEvent();
-                vmEvent.Name = eventInfo.Name;  
-                eventList.Add(vmEvent);
+                return null;
             }
-            return eventList;
+            return new BitmapImage(new Uri(value.ToString()));
         }
-        private List<ViewModelProperty> DealProperties(Type type)
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            List<ViewModelProperty> propertyList = new List<ViewModelProperty>();
-            foreach(PropertyInfo propertyInfo in propertyInfos)
-            {
-                Type declaringType = propertyInfo.DeclaringType;
-                if (!declaringType.Name.EndsWith(type.Name))
-                {
-                    continue;
-                }
-                ViewModelProperty vmProperty = new ViewModelProperty();
-                vmProperty.Name = propertyInfo.Name;
-                propertyInfo.GetAccessors();
-                propertyList.Add(vmProperty);
-            }
-            return propertyList;
-        }
-        private List<ViewModelField> DealFields(Type type)
-        {
-            FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            List<ViewModelField> fieldList = new List<ViewModelField>();
-            foreach(FieldInfo fieldInfo in fieldInfos)
-            {
-                Type declaringType = fieldInfo.DeclaringType;
-                if (!declaringType.Name.EndsWith(type.Name) || fieldInfo.IsPrivate)
-                {
-                    continue;
-                }
-                ViewModelField vmField = new ViewModelField();
-                vmField.Name = fieldInfo.Name;
-                fieldList.Add(vmField);
-            }
-            return fieldList;
+            throw new NotImplementedException();
         }
     }
 }

@@ -6,6 +6,10 @@
         xmlns:local="clr-namespace:AssemblyViewer"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <local:CompositeCollectionConverter x:Key="CompositeCollectionConverter"/>
+        <local:UrlToImageSourceConverter x:Key="UrlToImageSourceConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="22"/>
@@ -15,11 +19,26 @@
         </Grid.RowDefinitions>
         <TreeView Name="treeView" Grid.Row="1" ItemsSource="{Binding NameSpaecList}" Background="DimGray">
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type local:ViewModelNameSpace}" ItemsSource="{Binding ChildList}">
-                    <TextBlock Text="{Binding Name}" Foreground="{Binding FontBrush}"/>
+                <HierarchicalDataTemplate DataType = "{x:Type local:ViewModelBaseClass}">
+                    <HierarchicalDataTemplate.ItemsSource>
+                        <MultiBinding Converter="{StaticResource CompositeCollectionConverter}">
+                            <Binding Path="MethodList"/>
+                            <Binding Path="PropertyList"/>
+                            <Binding Path="EventList"/>
+                            <Binding Path="FieldList"/>
+                            <Binding Path="ChildList"/>
+                        </MultiBinding>
+                    </HierarchicalDataTemplate.ItemsSource>
+                    <WrapPanel>
+                        <Image Width="15" Height="15" Source="{Binding Icon, Converter={StaticResource UrlToImageSourceConverter}}"/>
+                        <TextBlock Text="{Binding Name}" Foreground="{Binding FontBrush}" Margin="5 0 0 0"/>
+                    </WrapPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType = "{x:Type local:ViewModelObject}" ItemsSource = "{Binding ChildList}">
-                    <TextBlock Text="{Binding Name}" Foreground="{Binding FontBrush}"/>
+                    <WrapPanel>
+                        <Image Width="15" Height="15" Source="{Binding Icon, Converter={StaticResource UrlToImageSourceConverter}}"/>
+                        <TextBlock Text="{Binding Name}" Foreground="{Binding FontBrush}" Margin="5 0 0 0"/>
+                    </WrapPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
         </TreeView>

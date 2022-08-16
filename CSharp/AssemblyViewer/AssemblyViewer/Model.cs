@@ -13,26 +13,37 @@ namespace AssemblyViewer
     }
     public enum ViewerType
     {
+        InValid = -1,
         Class,
+        Constant,
+        Delegate,
         Interface,
-        Enum,
-        Struct,
+        Enumeration,
+        EnumerationItem,
+        Structure,
         Method,
         Property,
         Event,
-        Field
+        Field,
+        Exception,
+        Module,
+        Operator,
+        Namespace,
     }
-    public enum AccessRight
+    public enum AccessRights
     {
+        InValid = -1,
         Public,
         Protected,
         Private,
-        Internal
+        Internal,
+        Shortcut,
+        Sealed
     }
     public class ModelObject
     {
         public string Name { get; set; }
-        public AccessRight AccessRights { get; set; }
+        public AccessRights AccessRights { get; set; }
         public ViewerType Type { get; set; }
         public List<ModelObject> ChildList { get; set; }
     }
@@ -63,14 +74,14 @@ namespace AssemblyViewer
     {
         public ModelEnum()
         {
-            Type = ViewerType.Enum;
+            Type = ViewerType.Enumeration;
         }
     }
     public class ModelStruct : ModelBaseClass
     {
         public ModelStruct()
         {
-            Type = ViewerType.Struct;
+            Type = ViewerType.Structure;
         }
     }
     //==========================================================//

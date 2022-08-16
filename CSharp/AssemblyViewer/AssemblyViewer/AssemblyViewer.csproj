@@ -9,4 +9,358 @@
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Images\Assembly.16.16.png" />
+    <None Remove="Images\AssemblyError.16.16.png" />
+    <None Remove="Images\AssemblyExe.16.16.png" />
+    <None Remove="Images\ClassInternal.16.16.png" />
+    <None Remove="Images\ClassPrivate.16.16.png" />
+    <None Remove="Images\ClassProtected.16.16.png" />
+    <None Remove="Images\ClassPublic.16.16.png" />
+    <None Remove="Images\ClassShortcut.16.16.png" />
+    <None Remove="Images\ConstantInternal.16.16.png" />
+    <None Remove="Images\ConstantPrivate.16.16.png" />
+    <None Remove="Images\ConstantProtected.16.16.png" />
+    <None Remove="Images\ConstantPublic.16.16.png" />
+    <None Remove="Images\ConstantSealed.16.16.png" />
+    <None Remove="Images\ConstantShortcut.16.16.png" />
+    <None Remove="Images\DelegateInternal.16.16.png" />
+    <None Remove="Images\DelegatePrivate.16.16.png" />
+    <None Remove="Images\DelegateProtected.16.16.png" />
+    <None Remove="Images\DelegatePublic.16.16.png" />
+    <None Remove="Images\DelegateShortcut.16.16.png" />
+    <None Remove="Images\EnumerationInternal.16.16.png" />
+    <None Remove="Images\EnumerationItemInternal.16.16.png" />
+    <None Remove="Images\EnumerationItemPrivate.16.16.png" />
+    <None Remove="Images\EnumerationItemProtected.16.16.png" />
+    <None Remove="Images\EnumerationItemPublic.16.16.png" />
+    <None Remove="Images\EnumerationItemSealed.16.16.png" />
+    <None Remove="Images\EnumerationItemShortcut.16.16.png" />
+    <None Remove="Images\EnumerationPrivate.16.16.png" />
+    <None Remove="Images\EnumerationProtected.16.16.png" />
+    <None Remove="Images\EnumerationPublic.16.16.png" />
+    <None Remove="Images\EnumerationShortcut.16.16.png" />
+    <None Remove="Images\EventInternal.16.16.png" />
+    <None Remove="Images\EventPrivate.16.16.png" />
+    <None Remove="Images\EventProtected.16.16.png" />
+    <None Remove="Images\EventPublic.16.16.png" />
+    <None Remove="Images\EventSealed.16.16.png" />
+    <None Remove="Images\EventShortcut.16.16.png" />
+    <None Remove="Images\ExceptionInternal.16.16.png" />
+    <None Remove="Images\ExceptionPrivate.16.16.png" />
+    <None Remove="Images\ExceptionProtected.16.16.png" />
+    <None Remove="Images\ExceptionPublic.16.16.png" />
+    <None Remove="Images\ExceptionSettings.16.16.png" />
+    <None Remove="Images\ExceptionShortcut.16.16.png" />
+    <None Remove="Images\ExtensionMethod.16.16.png" />
+    <None Remove="Images\FieldInternal.16.16.png" />
+    <None Remove="Images\FieldPrivate.16.16.png" />
+    <None Remove="Images\FieldProtected.16.16.png" />
+    <None Remove="Images\FieldPublic.16.16.png" />
+    <None Remove="Images\FieldSealed.16.16.png" />
+    <None Remove="Images\FieldShortcut.16.16.png" />
+    <None Remove="Images\InterfaceInternal.16.16.png" />
+    <None Remove="Images\InterfacePrivate.16.16.png" />
+    <None Remove="Images\InterfaceProtected.16.16.png" />
+    <None Remove="Images\InterfacePublic.16.16.png" />
+    <None Remove="Images\InterfaceShortcut.16.16.png" />
+    <None Remove="Images\MethodInternal.16.16.png" />
+    <None Remove="Images\MethodPrivate.16.16.png" />
+    <None Remove="Images\MethodProtected.16.16.png" />
+    <None Remove="Images\MethodPublic.16.16.png" />
+    <None Remove="Images\MethodSealed.16.16.png" />
+    <None Remove="Images\MethodShortcut.16.16.png" />
+    <None Remove="Images\ModuleInternal.16.16.png" />
+    <None Remove="Images\ModulePrivate.16.16.png" />
+    <None Remove="Images\ModuleProtected.16.16.png" />
+    <None Remove="Images\ModulePublic.16.16.png" />
+    <None Remove="Images\ModulesWindow.16.16.png" />
+    <None Remove="Images\Namespace.16.16.png" />
+    <None Remove="Images\OperatorInternal.16.16.png" />
+    <None Remove="Images\OperatorPrivate.16.16.png" />
+    <None Remove="Images\OperatorProtected.16.16.png" />
+    <None Remove="Images\OperatorPublic.16.16.png" />
+    <None Remove="Images\OperatorSealed.16.16.png" />
+    <None Remove="Images\OperatorShortcut.16.16.png" />
+    <None Remove="Images\Parameter.16.16.png" />
+    <None Remove="Images\Property.16.16.png" />
+    <None Remove="Images\PropertyInternal.16.16.png" />
+    <None Remove="Images\PropertyPrivate.16.16.png" />
+    <None Remove="Images\PropertyProtected.16.16.png" />
+    <None Remove="Images\PropertyPublic.16.16.png" />
+    <None Remove="Images\PropertySealed.16.16.png" />
+    <None Remove="Images\PropertyShortcut.16.16.png" />
+    <None Remove="Images\Reference.16.16.png" />
+    <None Remove="Images\String.16.16.png" />
+    <None Remove="Images\StructureInternal.16.16.png" />
+    <None Remove="Images\StructurePrivate.16.16.png" />
+    <None Remove="Images\StructureProtected.16.16.png" />
+    <None Remove="Images\StructurePublic.16.16.png" />
+    <None Remove="Images\StructureShortcut.16.16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Assembly.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\AssemblyError.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\AssemblyExe.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ClassInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ClassPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ClassProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ClassPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ClassShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ConstantInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ConstantPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ConstantProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ConstantPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ConstantSealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ConstantShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\DelegateInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\DelegatePrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\DelegateProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\DelegatePublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\DelegateShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationItemInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationItemPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationItemProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationItemPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationItemSealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationItemShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EnumerationShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EventInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EventPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EventProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EventPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EventSealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EventShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExceptionInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExceptionPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExceptionProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExceptionPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExceptionSettings.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExceptionShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ExtensionMethod.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FieldInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FieldPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FieldProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FieldPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FieldSealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FieldShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\InterfaceInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\InterfacePrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\InterfaceProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\InterfacePublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\InterfaceShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MethodInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MethodPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MethodProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MethodPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MethodSealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MethodShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ModuleInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ModulePrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ModuleProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ModulePublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ModulesWindow.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Namespace.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\OperatorInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\OperatorPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\OperatorProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\OperatorPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\OperatorSealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\OperatorShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Parameter.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Property.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PropertyInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PropertyPrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PropertyProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PropertyPublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PropertySealed.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PropertyShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Reference.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\String.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\StructureInternal.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\StructurePrivate.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\StructureProtected.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\StructurePublic.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\StructureShortcut.16.16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
 </Project>
