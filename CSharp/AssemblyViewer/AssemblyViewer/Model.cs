@@ -6,81 +6,105 @@ using System.Threading.Tasks;
 
 namespace AssemblyViewer
 {
-    class Model
-    {
-    }
-    class ModelNameSpace
+    public class ModelNameSpace
     {
         public string Name { get; set; }
-        public List<ModelObject> ObjectList { get; set; }
+        public List<ModelObject> ChildList { get; set; }
     }
-    class ModelObject
-    {
-        public string Name { get; set; }
-        public string AccessRights { get; set; }
-    }
-    //==========================================================//
-    public enum ClassType
+    public enum ViewerType
     {
         Class,
         Interface,
         Enum,
-        Struct
+        Struct,
+        Method,
+        Property,
+        Event,
+        Field
     }
-    class ModelBaseClass : ModelObject
+    public enum AccessRight
+    {
+        Public,
+        Protected,
+        Private,
+        Internal
+    }
+    public class ModelObject
+    {
+        public string Name { get; set; }
+        public AccessRight AccessRights { get; set; }
+        public ViewerType Type { get; set; }
+        public List<ModelObject> ChildList { get; set; }
+    }
+    //==========================================================//
+    public class ModelBaseClass : ModelObject
     {
         public List<ModelBaseClass> DerivedList { get; set; }
         public ModelBaseClass BaseClass { get; set; }
         public List<ModelMethod> MethodList { get; set; }
         public List<ModelProperty> PropertyList { get; set; }
         public List<ModelEvent> EventList { get; set; }
-        public ClassType Type { get; set; }
     }
-    class ModelInterface : ModelBaseClass
+    public class ModelInterface : ModelBaseClass
     {
         public ModelInterface()
         {
-            Type = ClassType.Interface;
+            Type = ViewerType.Interface;
         }
     }
-    class ModelClass : ModelBaseClass
+    public class ModelClass : ModelBaseClass
     {
         public ModelClass()
         {
-            Type = ClassType.Class;
+            Type = ViewerType.Class;
         }
     }
-    class ModelEnum : ModelBaseClass
+    public class ModelEnum : ModelBaseClass
     {
         public ModelEnum()
         {
-            Type = ClassType.Enum;
+            Type = ViewerType.Enum;
         }
     }
-    class ModelStruct : ModelBaseClass
+    public class ModelStruct : ModelBaseClass
     {
         public ModelStruct()
         {
-            Type = ClassType.Struct;
+            Type = ViewerType.Struct;
         }
     }
     //==========================================================//
-    class ModelMethod : ModelObject
+    public class ModelMethod : ModelObject
     {
+        public ModelMethod()
+        {
+            Type = ViewerType.Method;
+        }
     }
-    class ModelEvent : ModelObject
+    public class ModelEvent : ModelObject
     {
         public List<ModelMethod> MethodList { get; set; }
+        public ModelEvent()
+        {
+            Type = ViewerType.Event;
+        }
     }
 
-    class ModelProperty : ModelObject
+    public class ModelProperty : ModelObject
     {
         public List<ModelMethod> MethodList { get; set; }
+        public ModelProperty()
+        {
+            Type = ViewerType.Property;
+        }
     }
 
-    class ModelField : ModelObject
+    public class ModelField : ModelObject
     {
-
+        public ModelField()
+        {
+            Type = ViewerType.Field;
+        }
     }
 
 }

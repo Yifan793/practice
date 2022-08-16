@@ -59,6 +59,10 @@ namespace AssemblyViewer
 
     public class MainWindowViewModel : ViewModelBase
     {
+        public MainWindowViewModel()
+        {
+            NameSpaecList = new List<ViewModelNameSpace>();
+        }
         private string _filename;
         public string FileName
         {
@@ -78,90 +82,141 @@ namespace AssemblyViewer
                 DealAssembly(assembly);
             }
         }
+        public List<ViewModelNameSpace> NameSpaecList { get; set; }
 
         public void DealAssembly(Assembly assembly)
         {
-            int i = 0;
-            foreach(Type type in assembly.GetTypes())
+            Dictionary<string, ViewModelNameSpace> ns = new Dictionary<string, ViewModelNameSpace>();
+            Dictionary<string, ViewModelBaseClass> bs = new Dictionary<string, ViewModelBaseClass>();
+            foreach (Type type in assembly.GetTypes())
             {
-                if (i != -1)
+                if (!ns.ContainsKey(type.Namespace))
                 {
-                    Console.WriteLine("namespace: " + type.Namespace + " " + type.Name);
-                    MethodInfo[] methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    EventInfo[] events = type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                    PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                    FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                    if (type.IsEnum)
-                    {
-                        string[] enums = type.GetEnumNames();
-                        DealEnums(enums);
-                    }
-                    if (type.IsInterface)
-                    {
-                        Type[] interfaceTypes = type.GetInterfaces();
-                        foreach(Type interfaceType in interfaceTypes)
-                        {
-                            Console.WriteLine("interface " + interfaceType.Name);
-                        }
-                    }
-                    DealMethods(methods);
-                    DealEvents(events);
-                    DealProperties(properties);
-                    DealFields(fields);
+                    ViewModelNameSpace viewModleNs = new ViewModelNameSpace();
+                    viewModleNs.Name = type.Namespace;
+                    ns[type.Namespace] = viewModleNs;
+                    NameSpaecList.Add(ns[type.Namespace]);
                 }
-                i++;
+                Console.WriteLine("namespace: " + type.Namespace + " " + type.Name);
+                ViewModelBaseClass vmBase = null;
+                if (type.IsEnum)
+                {
+                    vmBase = new ViewModelEnum();
+                    vmBase.Name = type.Name;
+                    string[] enums = type.GetEnumNames();
+                    foreach (string enumName in enums)
+                    {
+                        ViewModelObject vmObject = new ViewModelObject();
+                        vmObject.Name = enumName;
+                        vmBase.ChildList.Add(vmObject);
+                    }
+                }
+                else
+                {
+                    if (type.IsClass)
+                    {
+                        vmBase = new ViewModelClass();
+                    }
+                    else if (type.IsInterface)
+                    {
+                        vmBase = new ViewModelInterface();
+                    }
+                    else if (type.IsValueType)
+                    {
+                        vmBase = new ViewModelStruct();
+                    }
+                    if (vmBase != null)
+                    {
+                        vmBase.Name = type.Name;
+                        vmBase.ChildList.AddRange(DealMethods(type));
+                        vmBase.ChildList.AddRange(DealEvents(type));
+                        vmBase.ChildList.AddRange(DealProperties(type));
+                        vmBase.ChildList.AddRange(DealFields(type));
+                    }
+                }
+                if (vmBase != null)
+                {
+                    bs[type.Name] = vmBase;
+                    if (type.DeclaringType != null && bs[type.DeclaringType.Name] != null)
+                    {
+                        bs[type.DeclaringType.Name].ChildList.Add(vmBase);
+                    }
+                    else
+                    {
+                        ns[type.Namespace].ChildList.Add(vmBase);
+                    }
+                }
             }
         }
 
-        private void DealMethods(MethodInfo[] methods)
+        private List<ViewModelMethod> DealMethods(Type type)
         {
+            MethodInfo[] methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            List<ViewModelMethod> methodList = new List<ViewModelMethod>();
             foreach(MethodInfo method in methods)
             {
-                Console.WriteLine("method " + method.ToString());
-                object[] attributes = method.GetCustomAttributes(false);
-                //foreach(object attr in attributes)
-                //{
-                //    Console.WriteLine("method attr " + attr);
-                //}
+                Type declaringType = method.DeclaringType;
+                if (!declaringType.Name.EndsWith(type.Name) || method.IsSpecialName)
+                {
+                    continue;
+                }
+                ViewModelMethod vmMethod = new ViewModelMethod();
+                vmMethod.Name = method.Name;
+                methodList.Add(vmMethod);
             }
+            return methodList;
         }
-        private void DealProperties(PropertyInfo[] propertyInfos)
+        private List<ViewModelEvent> DealEvents(Type type)
         {
+            EventInfo[] eventInfos = type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            List<ViewModelEvent> eventList = new List<ViewModelEvent>();
+            foreach (EventInfo eventInfo in eventInfos)
+            {
+                Type declaringType = eventInfo.DeclaringType;
+                if (!declaringType.Name.EndsWith(type.Name))
+                {
+                    continue;
+                }
+                ViewModelEvent vmEvent = new ViewModelEvent();
+                vmEvent.Name = eventInfo.Name;  
+                eventList.Add(vmEvent);
+            }
+            return eventList;
+        }
+        private List<ViewModelProperty> DealProperties(Type type)
+        {
+            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            List<ViewModelProperty> propertyList = new List<ViewModelProperty>();
             foreach(PropertyInfo propertyInfo in propertyInfos)
             {
-                Console.WriteLine("property " + propertyInfo.ToString());
-                object[] attributes = propertyInfo.GetCustomAttributes(false);
-                //foreach(object attr in attributes)
-                //{
-                //    Console.WriteLine("property attr " + attr);
-                //}
+                Type declaringType = propertyInfo.DeclaringType;
+                if (!declaringType.Name.EndsWith(type.Name))
+                {
+                    continue;
+                }
+                ViewModelProperty vmProperty = new ViewModelProperty();
+                vmProperty.Name = propertyInfo.Name;
+                propertyInfo.GetAccessors();
+                propertyList.Add(vmProperty);
             }
+            return propertyList;
         }
-        private void DealEvents(EventInfo[] eventInfos)
+        private List<ViewModelField> DealFields(Type type)
         {
-            foreach(EventInfo eventInfo in eventInfos)
-            {
-                Console.WriteLine("eventInfo " + eventInfo.ToString());
-                object[] attributes = eventInfo.GetCustomAttributes(false);
-                //foreach(string attr in attributes)
-                //{
-                //    Console.WriteLine("eventInfo attr " + attr);
-                //}
-            }
-        }
-        private void DealFields(FieldInfo[] fieldInfos)
-        {
+            FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            List<ViewModelField> fieldList = new List<ViewModelField>();
             foreach(FieldInfo fieldInfo in fieldInfos)
             {
-                Console.WriteLine("fieldInfo " + fieldInfo.Name);
+                Type declaringType = fieldInfo.DeclaringType;
+                if (!declaringType.Name.EndsWith(type.Name) || fieldInfo.IsPrivate)
+                {
+                    continue;
+                }
+                ViewModelField vmField = new ViewModelField();
+                vmField.Name = fieldInfo.Name;
+                fieldList.Add(vmField);
             }
-        }
-        private void DealEnums(string[] enums)
-        {
-            foreach(string enumName in enums)
-            {
-                Console.WriteLine("enumName " + enumName);
-            }
+            return fieldList;
         }
     }
 }
