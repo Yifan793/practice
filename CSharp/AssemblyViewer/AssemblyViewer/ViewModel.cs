@@ -185,7 +185,6 @@ namespace AssemblyViewer
 
     }
 
-
     public class ViewModelInterface : ViewModelBaseClass
     {
         public ViewModelInterface()
@@ -325,7 +324,4 @@ namespace AssemblyViewer
             AccessRights = Util.getAccessibility(constructorInfo);
         }
     }
-
-
-
 }

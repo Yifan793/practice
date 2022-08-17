@@ -64,7 +64,7 @@ namespace AssemblyViewer
     {
         public MainWindowViewModel()
         {
-            NameSpaecList = new ObservableCollection<ViewModelObject>();
+            AssemblyList = new ObservableCollection<ViewModelObject>();
         }
         private string _filename;
         public string FileName
@@ -81,15 +81,22 @@ namespace AssemblyViewer
                 }
                 _filename = value;
                 onPropertyChanged();
-                NameSpaecList.Clear();
-                Assembly assembly = Assembly.LoadFile(_filename);
-                DealAssembly(assembly);
+                DealAssembly(_filename);
             }
         }
-        public ObservableCollection<ViewModelObject> NameSpaecList { get; set; }
+        public ObservableCollection<ViewModelObject> AssemblyList { get; set; }
 
-        public void DealAssembly(Assembly assembly)
+        public void DealAssembly(string filename)
         {
+            Assembly assembly = Assembly.LoadFile(filename);
+            MethodInfo entry = assembly.EntryPoint;
+            
+            ViewModelObject vmAssembly = new ViewModelObject();
+            vmAssembly.Name = assembly.ManifestModule.Name;
+            vmAssembly.Type = ViewerType.Assembly;
+            vmAssembly.AccessRights = AccessRights.InValid;
+            AssemblyList.Add(vmAssembly);
+
             Dictionary<string, ViewModelNameSpace> ns = new Dictionary<string, ViewModelNameSpace>();
             Dictionary<string, ViewModelBaseClass> bs = new Dictionary<string, ViewModelBaseClass>();
             foreach (Type type in assembly.GetTypes())
@@ -99,9 +106,13 @@ namespace AssemblyViewer
                     ViewModelNameSpace viewModleNs = new ViewModelNameSpace();
                     viewModleNs.Name = type.Namespace;
                     ns[type.Namespace] = viewModleNs;
-                    NameSpaecList.Add(ns[type.Namespace]);
+                    vmAssembly.ChildList.Add(ns[type.Namespace]);
                 }
                 ViewModelBaseClass vmBase = Util.DealClass(type);
+                if (entry.DeclaringType == type)
+                {
+                    vmBase.ChildList.Add(new ViewModelMethod(entry));
+                }
                 if (vmBase != null)
                 {
                     bs[type.Name] = vmBase;
@@ -115,7 +126,7 @@ namespace AssemblyViewer
                     }
                 }
             }
-            Util.SortAll(NameSpaecList);
+            Util.SortAll(vmAssembly.ChildList);
         }
     }
 

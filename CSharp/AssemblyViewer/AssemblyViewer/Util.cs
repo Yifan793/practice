@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,20 +52,7 @@ namespace AssemblyViewer
             ViewModelBaseClass vmBase = null;
             if (type.IsEnum)
             {
-                vmBase = new ViewModelEnum();
-                vmBase.Name = type.Name;
-                vmBase.Type = ViewerType.Enumeration;
-                string[] enums = type.GetEnumNames();
-                var fieldList = vmBase.FieldList.ToList();
-                fieldList.AddRange(Util.DealFields(type));
-                vmBase.FieldList = new ObservableCollection<ViewModelField>(fieldList);
-                foreach (string enumName in enums)
-                {
-                    ViewModelEnumItem vmObject = new ViewModelEnumItem();
-                    vmObject.Name = enumName;
-                    vmObject.ReturnValue = type.Name;
-                    vmBase.ChildList.Add(vmObject);
-                }
+                vmBase = DealEnum(type);
             }
             else
             {
@@ -90,6 +78,8 @@ namespace AssemblyViewer
                 {
                     vmBase.Name = type.Name;
                     vmBase.AccessRights = getAccessibility(type);
+                    vmBase.BaseList.Add(DealBaseType(type));
+
                     var methodList = vmBase.MethodList.ToList();
                     methodList.AddRange(DealMethods(type));
                     vmBase.MethodList = new ObservableCollection<ViewModelMethod>(methodList);
@@ -105,10 +95,27 @@ namespace AssemblyViewer
                     var fieldList = vmBase.FieldList.ToList();
                     fieldList.AddRange(DealFields(type));
                     vmBase.FieldList = new ObservableCollection<ViewModelField>(fieldList);
-
-                    vmBase.BaseList.Add(DealBaseType(type));
                 }
             }
+            return vmBase;
+        }
+        private static ViewModelEnum DealEnum(Type type)
+        {
+            ViewModelEnum vmBase = new ViewModelEnum();
+            vmBase.Name = type.Name;
+            vmBase.Type = ViewerType.Enumeration;
+            string[] enums = type.GetEnumNames();
+            var fieldList = vmBase.FieldList.ToList();
+            fieldList.AddRange(Util.DealFields(type));
+            vmBase.FieldList = new ObservableCollection<ViewModelField>(fieldList);
+            foreach (string enumName in enums)
+            {
+                ViewModelEnumItem vmObject = new ViewModelEnumItem();
+                vmObject.Name = enumName;
+                vmObject.ReturnValue = type.Name;
+                vmBase.ChildList.Add(vmObject);
+            }
+            vmBase.BaseList.Add(DealBaseType(type));
             return vmBase;
         }
         private static List<ViewModelMethod> DealMethods(Type type)
@@ -156,7 +163,6 @@ namespace AssemblyViewer
                     ViewModelMethod vmRemoveMethod = new ViewModelMethod(removeMethod);
                     vmEvent.ChildList.Add(vmRemoveMethod);
                 }
-
                 eventList.Add(vmEvent);
             }
             return eventList;

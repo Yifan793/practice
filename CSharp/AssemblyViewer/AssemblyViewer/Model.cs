@@ -29,6 +29,7 @@ namespace AssemblyViewer
         Module,
         Operator,
         Namespace,
+        Assembly,
     }
     public enum AccessRights
     {
