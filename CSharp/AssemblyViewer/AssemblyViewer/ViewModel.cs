@@ -11,7 +11,7 @@ namespace AssemblyViewer
 {
     public class ViewModleRoot
     {
-        public List<ViewModelNameSpace> NameSpaceList { get; set; }
+        public ObservableCollection<ViewModelNameSpace> NameSpaceList { get; set; }
     }
 
     public class ViewModelObject : IComparable<ViewModelObject>
@@ -19,7 +19,7 @@ namespace AssemblyViewer
         public ViewModelObject()
         {
             FontBrush = new SolidColorBrush(Colors.Cornsilk);
-            ChildList = new List<ViewModelObject>();
+            ChildList = new ObservableCollection<ViewModelObject>();
         }
         public string Name { get; set; }
         public string LeftBracket { get; set; }
@@ -42,7 +42,7 @@ namespace AssemblyViewer
         }
         public ViewerType Type { get; set; }
         public SolidColorBrush FontBrush { get; set; }
-        public List<ViewModelObject> ChildList { get; set; }
+        public ObservableCollection<ViewModelObject> ChildList { get; set; }
         public ModelObject Model
         {
             get
@@ -65,7 +65,7 @@ namespace AssemblyViewer
                 Name = value.Name;
                 AccessRights = value.AccessRights;
                 Type = value.Type;
-                List<ViewModelObject> list = new List<ViewModelObject>();
+                ObservableCollection<ViewModelObject> list = new ObservableCollection<ViewModelObject>();
                 foreach (ModelObject obj in value.ChildList)
                 {
                     ViewModelObject viewModelObject = new ViewModelObject();
@@ -98,19 +98,19 @@ namespace AssemblyViewer
     {
         public ViewModelBaseClass()
         {
-            BaseList = new List<ViewModelObject>();
-            MethodList = new List<ViewModelMethod>();
-            PropertyList = new List<ViewModelProperty>();
-            EventList = new List<ViewModelEvent>();
-            FieldList = new List<ViewModelField>();
+            BaseList = new ObservableCollection<ViewModelObject>();
+            MethodList = new ObservableCollection<ViewModelMethod>();
+            PropertyList = new ObservableCollection<ViewModelProperty>();
+            EventList = new ObservableCollection<ViewModelEvent>();
+            FieldList = new ObservableCollection<ViewModelField>();
         }
         public ViewModelObject BaseClass { get; set; }
 
-        public List<ViewModelObject> BaseList { get; set; }
-        public List<ViewModelMethod> MethodList { get; set; }
-        public List<ViewModelEvent> EventList { get; set; }
-        public List<ViewModelProperty> PropertyList { get; set; }
-        public List<ViewModelField> FieldList { get; set; }
+        public ObservableCollection<ViewModelObject> BaseList { get; set; }
+        public ObservableCollection<ViewModelMethod> MethodList { get; set; }
+        public ObservableCollection<ViewModelEvent> EventList { get; set; }
+        public ObservableCollection<ViewModelProperty> PropertyList { get; set; }
+        public ObservableCollection<ViewModelField> FieldList { get; set; }
 
         public ModelBaseClass Model
         {
@@ -150,7 +150,7 @@ namespace AssemblyViewer
                 AccessRights = value.AccessRights;
                 BaseClass.Model = value.BaseClass;
                 Type = value.Type;
-                List<ViewModelMethod> methodList = new();
+                ObservableCollection<ViewModelMethod> methodList = new();
                 foreach (ModelMethod obj in value.MethodList)
                 {
                     ViewModelMethod method = new()
@@ -160,7 +160,7 @@ namespace AssemblyViewer
                     methodList.Add(method);
                 }
                 MethodList = methodList;
-                List<ViewModelProperty> propertyList = new();
+                ObservableCollection<ViewModelProperty> propertyList = new();
                 foreach (ModelProperty obj in value.PropertyList)
                 {
                     ViewModelProperty property = new()
@@ -170,7 +170,7 @@ namespace AssemblyViewer
                     propertyList.Add(property);
                 }
                 PropertyList = propertyList;
-                List<ViewModelEvent> eventList = new();
+                ObservableCollection<ViewModelEvent> eventList = new();
                 foreach (ModelEvent obj in value.EventList)
                 {
                     ViewModelEvent viewModelEvent = new()
@@ -182,6 +182,7 @@ namespace AssemblyViewer
                 EventList = eventList;
             }
         }
+
     }
 
 
@@ -196,12 +197,12 @@ namespace AssemblyViewer
 
     public class ViewModelClass : ViewModelBaseClass
     {
-        public List<ViewModelConstructor> ConstructorList { get; set; }
+        public ObservableCollection<ViewModelConstructor> ConstructorList { get; set; }
         public ViewModelClass()
         {
             FontBrush = new SolidColorBrush(Colors.MediumTurquoise);
             Type = ViewerType.Class;
-            ConstructorList = new List<ViewModelConstructor>();
+            ConstructorList = new ObservableCollection<ViewModelConstructor>();
         }
     }
 

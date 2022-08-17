@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -45,7 +46,72 @@ namespace AssemblyViewer
             }
             return cur;
         }
-        public static List<ViewModelMethod> DealMethods(Type type)
+        public static ViewModelBaseClass DealClass(Type type)
+        {
+            ViewModelBaseClass vmBase = null;
+            if (type.IsEnum)
+            {
+                vmBase = new ViewModelEnum();
+                vmBase.Name = type.Name;
+                vmBase.Type = ViewerType.Enumeration;
+                string[] enums = type.GetEnumNames();
+                var fieldList = vmBase.FieldList.ToList();
+                fieldList.AddRange(Util.DealFields(type));
+                vmBase.FieldList = new ObservableCollection<ViewModelField>(fieldList);
+                foreach (string enumName in enums)
+                {
+                    ViewModelEnumItem vmObject = new ViewModelEnumItem();
+                    vmObject.Name = enumName;
+                    vmObject.ReturnValue = type.Name;
+                    vmBase.ChildList.Add(vmObject);
+                }
+            }
+            else
+            {
+                if (type.IsClass)
+                {
+                    vmBase = new ViewModelClass();
+                    ConstructorInfo[] infoList = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    foreach (ConstructorInfo info in infoList)
+                    {
+                        ViewModelConstructor method = new ViewModelConstructor(info);
+                        ((ViewModelClass)vmBase).ConstructorList.Add(method);
+                    }
+                }
+                else if (type.IsInterface)
+                {
+                    vmBase = new ViewModelInterface();
+                }
+                else if (type.IsValueType)
+                {
+                    vmBase = new ViewModelStruct();
+                }
+                if (vmBase != null)
+                {
+                    vmBase.Name = type.Name;
+                    vmBase.AccessRights = getAccessibility(type);
+                    var methodList = vmBase.MethodList.ToList();
+                    methodList.AddRange(DealMethods(type));
+                    vmBase.MethodList = new ObservableCollection<ViewModelMethod>(methodList);
+
+                    var eventList = vmBase.EventList.ToList();
+                    eventList.AddRange(DealEvents(type));
+                    vmBase.EventList = new ObservableCollection<ViewModelEvent>(eventList);
+
+                    var propertyList = vmBase.PropertyList.ToList();
+                    propertyList.AddRange(DealProperties(type));
+                    vmBase.PropertyList = new ObservableCollection<ViewModelProperty>(propertyList);
+
+                    var fieldList = vmBase.FieldList.ToList();
+                    fieldList.AddRange(DealFields(type));
+                    vmBase.FieldList = new ObservableCollection<ViewModelField>(fieldList);
+
+                    vmBase.BaseList.Add(DealBaseType(type));
+                }
+            }
+            return vmBase;
+        }
+        private static List<ViewModelMethod> DealMethods(Type type)
         {
             MethodInfo[] methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             List<ViewModelMethod> methodList = new List<ViewModelMethod>();
@@ -61,7 +127,7 @@ namespace AssemblyViewer
             }
             return methodList;
         }
-        public static List<ViewModelEvent> DealEvents(Type type)
+        private static List<ViewModelEvent> DealEvents(Type type)
         {
             EventInfo[] eventInfos = type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             List<ViewModelEvent> eventList = new List<ViewModelEvent>();
@@ -95,7 +161,7 @@ namespace AssemblyViewer
             }
             return eventList;
         }
-        public static List<ViewModelProperty> DealProperties(Type type)
+        private static List<ViewModelProperty> DealProperties(Type type)
         {
             PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             List<ViewModelProperty> propertyList = new List<ViewModelProperty>();
@@ -121,7 +187,7 @@ namespace AssemblyViewer
             }
             return propertyList;
         }
-        public static List<ViewModelField> DealFields(Type type)
+        private static List<ViewModelField> DealFields(Type type)
         {
             FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             List<ViewModelField> fieldList = new List<ViewModelField>();
@@ -143,23 +209,34 @@ namespace AssemblyViewer
         }
 
         //========================================================================//
-        public static void SortAll(List<ViewModelObject> vmList)
+        public static void SortAll(ObservableCollection<ViewModelObject> vmList)
         {
             if (vmList == null)
             {
                 return;
             }
-            vmList.Sort();
+            SortCollection(vmList);
             foreach (ViewModelObject vm in vmList)
             {
                 SortAll(vm.ChildList);
                 if (vm is ViewModelBaseClass BaseClass)
                 {
-                    BaseClass.MethodList.Sort();
-                    BaseClass.EventList.Sort();
-                    BaseClass.PropertyList.Sort();
-                    BaseClass.FieldList.Sort();
+                    SortCollection(BaseClass.MethodList);
+                    SortCollection(BaseClass.EventList);
+                    SortCollection(BaseClass.PropertyList);
+                    SortCollection(BaseClass.FieldList);
                 }
+            }
+        }
+
+        private static void SortCollection<T>(ObservableCollection<T> collection)
+        {
+            var sortedList = collection.ToList();
+            sortedList.Sort();
+            collection.Clear();
+            foreach (var sortedItem in sortedList)
+            {
+                collection.Add(sortedItem);
             }
         }
 
@@ -192,7 +269,6 @@ namespace AssemblyViewer
                 && !t.IsNestedFamORAssem
                 && !t.IsNestedFamANDAssem;
         }
-        // only nested types can be declared "protected"
         private static bool isProtected(Type t)
         {
             return
@@ -207,7 +283,6 @@ namespace AssemblyViewer
                 && !t.IsNestedFamORAssem
                 && !t.IsNestedFamANDAssem;
         }
-        // only nested types can be declared "private"
         private static bool isPrivate(Type t)
         {
             return
@@ -239,6 +314,10 @@ namespace AssemblyViewer
             else if (isInternal(type))
             {
                 return AccessRights.Internal;
+            }
+            else if (type.IsSealed)
+            {
+                return AccessRights.Sealed;
             }
             return AccessRights.Public;
         }
