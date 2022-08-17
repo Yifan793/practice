@@ -50,8 +50,7 @@ namespace AssemblyViewer
     //==========================================================//
     public class ModelBaseClass : ModelObject
     {
-        public List<ModelBaseClass> DerivedList { get; set; }
-        public ModelBaseClass BaseClass { get; set; }
+        public ModelObject BaseClass { get; set; }
         public List<ModelMethod> MethodList { get; set; }
         public List<ModelProperty> PropertyList { get; set; }
         public List<ModelEvent> EventList { get; set; }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -16,10 +18,15 @@ namespace AssemblyViewer
     {
         public ViewModelObject()
         {
-            FontBrush = new SolidColorBrush(Colors.White);
+            FontBrush = new SolidColorBrush(Colors.Cornsilk);
             ChildList = new List<ViewModelObject>();
         }
         public string Name { get; set; }
+        public string LeftBracket { get; set; }
+        public string RightBracket { get; set; }
+        public string Colon { get; set; }
+        public string Argument { get; set; }
+        public string ReturnValue { get; set; }
         public AccessRights AccessRights { get; set; }
         public string Icon
         {
@@ -91,18 +98,19 @@ namespace AssemblyViewer
     {
         public ViewModelBaseClass()
         {
+            BaseList = new List<ViewModelObject>();
             MethodList = new List<ViewModelMethod>();
             PropertyList = new List<ViewModelProperty>();
             EventList = new List<ViewModelEvent>();
             FieldList = new List<ViewModelField>();
         }
-        public ViewModelBaseClass BaseClass { get; set; }
+        public ViewModelObject BaseClass { get; set; }
 
+        public List<ViewModelObject> BaseList { get; set; }
         public List<ViewModelMethod> MethodList { get; set; }
         public List<ViewModelEvent> EventList { get; set; }
         public List<ViewModelProperty> PropertyList { get; set; }
         public List<ViewModelField> FieldList { get; set; }
-        public List<ViewModelBaseClass> DerivedList { get; set; }
 
         public ModelBaseClass Model
         {
@@ -113,13 +121,6 @@ namespace AssemblyViewer
                 model.AccessRights = AccessRights;
                 model.BaseClass = BaseClass.Model;
                 model.Type = Type;
-                List<ModelBaseClass> derivedList = new List<ModelBaseClass>();
-                foreach (ViewModelBaseClass obj in DerivedList)
-                {
-                    ModelBaseClass baseClass = obj.Model;
-                    derivedList.Add(baseClass);
-                }
-                model.DerivedList = derivedList;
                 List<ModelMethod> methodList = new List<ModelMethod>();
                 foreach (ViewModelMethod obj in MethodList)
                 {
@@ -149,16 +150,6 @@ namespace AssemblyViewer
                 AccessRights = value.AccessRights;
                 BaseClass.Model = value.BaseClass;
                 Type = value.Type;
-                List<ViewModelBaseClass> derivedList = new();
-                foreach (ModelBaseClass obj in value.DerivedList)
-                {
-                    ViewModelBaseClass baseClass = new()
-                    {
-                        Model = obj
-                    };
-                    derivedList.Add(baseClass);
-                }
-                DerivedList = derivedList;
                 List<ViewModelMethod> methodList = new();
                 foreach (ModelMethod obj in value.MethodList)
                 {
@@ -205,10 +196,12 @@ namespace AssemblyViewer
 
     public class ViewModelClass : ViewModelBaseClass
     {
+        public List<ViewModelConstructor> ConstructorList { get; set; }
         public ViewModelClass()
         {
             FontBrush = new SolidColorBrush(Colors.MediumTurquoise);
             Type = ViewerType.Class;
+            ConstructorList = new List<ViewModelConstructor>();
         }
     }
 
@@ -218,6 +211,16 @@ namespace AssemblyViewer
         {
             FontBrush = new SolidColorBrush(Colors.LightGreen);
             Type = ViewerType.Enumeration;
+        }
+    }
+
+    public class ViewModelEnumItem : ViewModelObject
+    {
+        public ViewModelEnumItem()
+        {
+            FontBrush = new SolidColorBrush(Colors.Plum);
+            Type = ViewerType.EnumerationItem;
+            Colon = " : ";
         }
     }
 
@@ -238,6 +241,30 @@ namespace AssemblyViewer
         {
             FontBrush = new SolidColorBrush(Colors.Orange);
             Type = ViewerType.Method;
+        }
+        public ViewModelMethod(MethodInfo methodInfo)
+        {
+            FontBrush = new SolidColorBrush(Colors.Orange);
+            Type = ViewerType.Method;
+            ParameterInfo[] paramInfo = methodInfo.GetParameters();
+            string paramString = "";
+            foreach (ParameterInfo param in paramInfo)
+            {  
+                string genericString = Util.getParamString(param.ParameterType);
+                string attrString = param.Attributes != ParameterAttributes.None ? param.Attributes.ToString() + " " : param.ParameterType.IsByRef ? "Ref " : "";
+                paramString += attrString + Util.getParamString(param.ParameterType) +  ", ";
+            }
+            if (paramInfo.Length > 0)
+            {
+                paramString = paramString.Substring(0, paramString.Length - 2);
+            }
+            Name = methodInfo.Name;
+            LeftBracket = "(";
+            Argument = paramString;
+            RightBracket = ")";
+            Colon = " : ";
+            ReturnValue = methodInfo.ReturnParameter.ToString().Replace("System.", "");
+            AccessRights = Util.getAccessibility(methodInfo);
         }
     }
     public class ViewModelEvent : ViewModelObject
@@ -265,6 +292,39 @@ namespace AssemblyViewer
             Type = ViewerType.Field;
         }
     }
+    public class ViewModelConstructor : ViewModelObject
+    {
+        public ViewModelConstructor()
+        {
+            FontBrush = new SolidColorBrush(Colors.MediumTurquoise);
+            Type = ViewerType.Method;
+        }
+        public ViewModelConstructor(ConstructorInfo constructorInfo)
+        {
+            FontBrush = new SolidColorBrush(Colors.MediumTurquoise);
+            Type = ViewerType.Method;
+            ParameterInfo[] paramInfo = constructorInfo.GetParameters();
+            string paramString = "";
+            foreach (ParameterInfo param in paramInfo)
+            {
+                string genericString = Util.getParamString(param.ParameterType);
+                string attrString = param.Attributes != ParameterAttributes.None ? param.Attributes.ToString() + " " : param.ParameterType.IsByRef ? "Ref " : "";
+                paramString += attrString + Util.getParamString(param.ParameterType) + ", ";
+            }
+            if (paramInfo.Length > 0)
+            {
+                paramString = paramString.Substring(0, paramString.Length - 2);
+            }
+            Name = constructorInfo.DeclaringType.Name;
+            LeftBracket = "(";
+            Argument = paramString;
+            RightBracket = ")";
+            Colon = " : ";
+            ReturnValue = "Void";
+            AccessRights = Util.getAccessibility(constructorInfo);
+        }
+    }
+
 
 
 }

@@ -17,6 +17,8 @@ using System.Windows.Shapes;
 using System.Reflection;
 using System.IO;
 using System.Collections;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace AssemblyViewer
 {
@@ -29,8 +31,8 @@ namespace AssemblyViewer
         {
             InitializeComponent();
             this.DataContext = ViewModel;
-            Assembly assembly = Assembly.LoadFile("C:\\Users\\ShaySong\\Downloads\\TestAssemblyForTraining.exe");
-            ViewModel.DealAssembly(assembly);
+            //Assembly assembly = Assembly.LoadFile("C:\\Users\\ShaySong\\Downloads\\TestAssemblyForTraining.exe");
+            //ViewModel.DealAssembly(assembly);
         }
         public MainWindowViewModel ViewModel { get; } = new MainWindowViewModel();
 
@@ -46,15 +48,27 @@ namespace AssemblyViewer
         }
     }
 
-    public class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged, INotifyCollectionChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
         public void onPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+        protected void OnCollectionChanged([CallerMemberName] String propertyName = "")
+        {
+            if (CollectionChanged != null)
+            {
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(propertyName));
+            }
+            NotifyCollectionChangedEventHandler h = CollectionChanged;
+            if (h != null)
+                h(this, e);
         }
     }
 
@@ -79,11 +93,24 @@ namespace AssemblyViewer
                 }
                 _filename = value;
                 onPropertyChanged();
+                NameSpaecList.Clear();
                 Assembly assembly = Assembly.LoadFile(_filename);
                 DealAssembly(assembly);
             }
         }
-        public List<ViewModelObject> NameSpaecList { get; set; }
+        private List<ViewModelObject> _nameSpaceList;
+        public List<ViewModelObject> NameSpaecList 
+        { 
+            get
+            {
+                return _nameSpaceList;
+            }
+            set
+            {
+                _nameSpaceList = value;
+                onPropertyChanged();
+            }
+        }
 
         public void DealAssembly(Assembly assembly)
         {
@@ -106,10 +133,12 @@ namespace AssemblyViewer
                     vmBase.Name = type.Name;
                     vmBase.Type = ViewerType.Enumeration;
                     string[] enums = type.GetEnumNames();
+                    vmBase.FieldList.AddRange(Util.DealFields(type));
                     foreach (string enumName in enums)
                     {
-                        ViewModelObject vmObject = new ViewModelObject();
+                        ViewModelEnumItem vmObject = new ViewModelEnumItem();
                         vmObject.Name = enumName;
+                        vmObject.ReturnValue = type.Name;
                         vmBase.ChildList.Add(vmObject);
                     }
                 }
@@ -118,6 +147,12 @@ namespace AssemblyViewer
                     if (type.IsClass)
                     {
                         vmBase = new ViewModelClass();
+                        ConstructorInfo[] infoList = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                        foreach(ConstructorInfo info in infoList)
+                        {
+                            ViewModelConstructor method = new ViewModelConstructor(info);
+                            ((ViewModelClass)vmBase).ConstructorList.Add(method);
+                        }
                     }
                     else if (type.IsInterface)
                     {
@@ -134,6 +169,7 @@ namespace AssemblyViewer
                         vmBase.EventList.AddRange(Util.DealEvents(type));
                         vmBase.PropertyList.AddRange(Util.DealProperties(type));
                         vmBase.FieldList.AddRange(Util.DealFields(type));
+                        vmBase.BaseList.Add(Util.DealBaseType(type));
                     }
                 }
                 if (vmBase != null)

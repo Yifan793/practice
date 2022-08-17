@@ -17,11 +17,29 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="22"/>
         </Grid.RowDefinitions>
-        <TreeView Name="treeView" Grid.Row="1" ItemsSource="{Binding NameSpaecList}" Background="DimGray">
+        <TreeView Name="treeView" Grid.Row="1" ItemsSource="{Binding NameSpaecList}" Background="#252526">
             <TreeView.Resources>
+                <HierarchicalDataTemplate DataType = "{x:Type local:ViewModelClass}">
+                    <HierarchicalDataTemplate.ItemsSource>
+                        <MultiBinding Converter="{StaticResource CompositeCollectionConverter}">
+                            <Binding Path="BaseList"/>
+                            <Binding Path="ConstructorList"/>
+                            <Binding Path="MethodList"/>
+                            <Binding Path="PropertyList"/>
+                            <Binding Path="EventList"/>
+                            <Binding Path="FieldList"/>
+                            <Binding Path="ChildList"/>
+                        </MultiBinding>
+                    </HierarchicalDataTemplate.ItemsSource>
+                    <WrapPanel>
+                        <Image Width="15" Height="15" Source="{Binding Icon, Converter={StaticResource UrlToImageSourceConverter}}"/>
+                        <TextBlock Text="{Binding Name}" Foreground="{Binding FontBrush}" Margin="5 0 0 0"/>
+                    </WrapPanel>
+                </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType = "{x:Type local:ViewModelBaseClass}">
                     <HierarchicalDataTemplate.ItemsSource>
                         <MultiBinding Converter="{StaticResource CompositeCollectionConverter}">
+                            <Binding Path="BaseList"/>
                             <Binding Path="MethodList"/>
                             <Binding Path="PropertyList"/>
                             <Binding Path="EventList"/>
@@ -38,6 +56,11 @@
                     <WrapPanel>
                         <Image Width="15" Height="15" Source="{Binding Icon, Converter={StaticResource UrlToImageSourceConverter}}"/>
                         <TextBlock Text="{Binding Name}" Foreground="{Binding FontBrush}" Margin="5 0 0 0"/>
+                        <TextBlock Text="{Binding LeftBracket}" Foreground="White"/>
+                        <TextBlock Text="{Binding Argument}" Foreground="LightBlue"/>
+                        <TextBlock Text="{Binding RightBracket}" Foreground="White"/>
+                        <TextBlock Text="{Binding Colon}" Foreground="White"/>
+                        <TextBlock Text="{Binding ReturnValue}" Foreground="#559cd6"/>
                     </WrapPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
