@@ -91,10 +91,7 @@ namespace AssemblyViewer
             Assembly assembly = Assembly.LoadFile(filename);
             MethodInfo entry = assembly.EntryPoint;
             
-            ViewModelObject vmAssembly = new ViewModelObject();
-            vmAssembly.Name = assembly.ManifestModule.Name;
-            vmAssembly.Type = ViewerType.Assembly;
-            vmAssembly.AccessRights = AccessRights.InValid;
+            ViewModelAssembly vmAssembly = new ViewModelAssembly(assembly.ManifestModule.Name);
             AssemblyList.Add(vmAssembly);
 
             Dictionary<string, ViewModelNameSpace> ns = new Dictionary<string, ViewModelNameSpace>();
@@ -103,22 +100,22 @@ namespace AssemblyViewer
             {
                 if (!ns.ContainsKey(type.Namespace))
                 {
-                    ViewModelNameSpace viewModleNs = new ViewModelNameSpace();
-                    viewModleNs.Name = type.Namespace;
+                    ViewModelNameSpace viewModleNs = new ViewModelNameSpace(type.Namespace);
                     ns[type.Namespace] = viewModleNs;
                     vmAssembly.ChildList.Add(ns[type.Namespace]);
                 }
-                ViewModelBaseClass vmBase = Util.DealClass(type);
-                if (entry.DeclaringType == type)
-                {
-                    vmBase.ChildList.Add(new ViewModelMethod(entry));
-                }
+                ViewModelBaseClass vmBase = getBaseClass(type);
                 if (vmBase != null)
                 {
+                    vmBase.DealType(type);
+                    if (entry.DeclaringType == type)
+                    {
+                        vmBase.MethodList.Add(new ViewModelMethod(entry));
+                    }
                     bs[type.Name] = vmBase;
                     if (type.DeclaringType != null && bs[type.DeclaringType.Name] != null)
                     {
-                        bs[type.DeclaringType.Name].ChildList.Add(vmBase);
+                        bs[type.DeclaringType.Name].ClassList.Add(vmBase);
                     }
                     else
                     {
@@ -127,6 +124,27 @@ namespace AssemblyViewer
                 }
             }
             Util.SortAll(vmAssembly.ChildList);
+        }
+
+        private ViewModelBaseClass getBaseClass(Type type)
+        {
+            if (type.IsEnum)
+            {
+                return new ViewModelEnum();
+            }
+            else if (type.IsClass)
+            {
+                return new ViewModelClass();
+            }
+            else if (type.IsInterface)
+            {
+                return new ViewModelInterface();
+            }
+            else if (type.IsValueType)
+            {
+                return new ViewModelStruct();
+            }
+            return null;
         }
     }
 
