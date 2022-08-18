@@ -123,7 +123,7 @@ namespace AssemblyViewer
                     }
                 }
             }
-            Util.SortAll(vmAssembly.ChildList);
+            SortAll(vmAssembly.ChildList);
         }
 
         private ViewModelBaseClass getBaseClass(Type type)
@@ -145,6 +145,37 @@ namespace AssemblyViewer
                 return new ViewModelStruct();
             }
             return null;
+        }
+
+        public void SortAll(ObservableCollection<ViewModelObject> vmList)
+        {
+            if (vmList == null)
+            {
+                return;
+            }
+            SortCollection(vmList);
+            foreach (ViewModelObject vm in vmList)
+            {
+                SortAll(vm.ChildList);
+                if (vm is ViewModelBaseClass BaseClass)
+                {
+                    SortCollection(BaseClass.MethodList);
+                    SortCollection(BaseClass.EventList);
+                    SortCollection(BaseClass.PropertyList);
+                    SortCollection(BaseClass.FieldList);
+                }
+            }
+        }
+
+        private void SortCollection<T>(ObservableCollection<T> collection)
+        {
+            var sortedList = collection.ToList();
+            sortedList.Sort();
+            collection.Clear();
+            foreach (var sortedItem in sortedList)
+            {
+                collection.Add(sortedItem);
+            }
         }
     }
 
@@ -189,4 +220,5 @@ namespace AssemblyViewer
             throw new NotImplementedException();
         }
     }
+
 }
