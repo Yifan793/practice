@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>计算器</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("td:not(#equal)").mousedown(function () {
+          $(this).toggleClass("active");
+        });
+        $("table tr td:not(#equal)").mouseup(function () {
+          $(this).toggleClass("active");
+        });
+        $("#equal").mousedown(function () {
+          $(this).toggleClass("active");
+        });
+        $("#equal").mouseup(function () {
+          $(this).toggleClass("active");
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <p class="result">0</p>
+    <table>
+      <tr class="memory">
+        <td class="memory">MC</td>
+        <td class="memory">MR</td>
+        <td class="memory">M+</td>
+        <td class="memory">M-</td>
+        <td class="memory">MS</td>
+        <td class="memory">M</td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td>%</td>
+        <td>CE</td>
+        <td>C</td>
+        <td>*</td>
+      </tr>
+      <tr>
+        <td>1/x</td>
+        <td>x^2</td>
+        <td>根号x</td>
+        <td>/</td>
+      </tr>
+      <tr>
+        <td class="number">7</td>
+        <td class="number">8</td>
+        <td class="number">9</td>
+        <td>*</td>
+      </tr>
+      <tr>
+        <td class="number">4</td>
+        <td class="number">5</td>
+        <td class="number">6</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td class="number">1</td>
+        <td class="number">2</td>
+        <td class="number">3</td>
+        <td>+</td>
+      </tr>
+      <tr>
+        <td class="number">+/-</td>
+        <td class="number">0</td>
+        <td class="number">.</td>
+        <td id="equal">=</td>
+      </tr>
+    </table>
+  </body>
+</html>
