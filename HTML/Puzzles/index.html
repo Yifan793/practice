@@ -14,10 +14,10 @@
         <img id="oriImg" src="images/test.png" />
         <text id="success" hidden>成功啦</text>
       </div>
-      <button id="start" onclick="start();">开始游戏</button>
+      <button id="start" onclick="game.start();">开始游戏</button>
     </div>
     <div class="panel">
-      <input id="select" type="file" onchange="selectFile()" />
+      <input id="select" type="file" onchange="game.selectFile()" />
       <input type="number" min="2" max="100" value="4" id="splitW" />
       <input type="number" min="2" max="100" value="4" id="splitH" />
     </div>
