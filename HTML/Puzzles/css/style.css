@@ -1,0 +1,46 @@
+.panel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+#select {
+  margin: 10px;
+}
+
+#start {
+  margin-bottom: 2px;
+}
+
+button {
+  height: 100%;
+}
+
+input {
+  margin: 10px;
+}
+
+#table div {
+  border: 0.5px solid white;
+  cursor: pointer;
+}
+
+#table div:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 0.5px solid black;
+}
+
+#oriImg {
+  width: 400px;
+  height: 100%;
+}
+
+.showarea {
+  width: 400px;
+  margin-left: 10px;
+  margin-right: 10px;
+  text-align: center;
+  font-size: 20px;
+  color: red;
+}

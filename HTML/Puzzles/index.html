@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>拼图游戏</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="panel">
+      <div id="table"></div>
+      <div class="showarea">
+        <img id="oriImg" src="images/test.png" />
+        <text id="success" hidden>成功啦</text>
+      </div>
+      <button id="start" onclick="start();">开始游戏</button>
+    </div>
+    <div class="panel">
+      <input id="select" type="file" onchange="selectFile()" />
+      <input type="number" min="2" max="100" value="4" id="splitW" />
+      <input type="number" min="2" max="100" value="4" id="splitH" />
+    </div>
+    <script src="script/puzzle.js"></script>
+  </body>
+</html>
