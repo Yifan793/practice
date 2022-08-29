@@ -1,0 +1,24 @@
+.head {
+  display: inline-block;
+  border-bottom: 0.5px solid black;
+  border-left: 0.5px solid rgb(224, 224, 224);
+  border-right: 0.5px solid rgb(224, 224, 224);
+  background-color: rgb(240, 240, 240);
+  width: 100px;
+  font-weight: bold;
+}
+.cell {
+  display: inline-block;
+  border: 0.5px solid rgb(224, 224, 224);
+  width: 100px;
+}
+.id {
+  display: inline-block;
+  border-top: 0.5px solid rgb(224, 224, 224);
+  border-bottom: 0.5px solid rgb(224, 224, 224);
+  border-right: 0.5px solid black;
+  background-color: rgb(240, 240, 240);
+  width: 50px;
+  font-weight: bold;
+  text-align: right;
+}
