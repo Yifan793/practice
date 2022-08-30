@@ -1,52 +1,28 @@
-const testColumns = [
-  {
-    name: " ",
-    selector: "row",
-  },
-  {
-    name: "Name",
-    selector: "name",
-  },
-  {
-    name: "Gender",
-    selector: "gender",
-  },
-  {
-    name: "Birthday",
-    selector: "birthday",
-  },
-  {
-    name: "Job",
-    selector: "job",
-  },
-];
+$("#rowmenu").hide();
+$("#colmenu").hide();
 
-const testData = [
-  {
-    name: "Gillian",
-    gender: "female",
-    birthday: "1996.3",
-    job: "writer",
-  },
-  {
-    name: "Florrie",
-    gender: "female",
-    birthday: "1988.5",
-    job: "receptionist",
-  },
-  {
-    name: "Grace",
-    gender: "male",
-    birthday: "1978.2",
-    job: "manager",
-  },
-  {
-    name: "Janet",
-    gender: "female",
-    birthday: "1990.1",
-    job: "boss",
-  },
-];
+$(".head").on("contextmenu", function (e) {
+  $("#colmenu").show(100);
+  $("#colmenu").css({
+    top: e.pageY + "px",
+    left: e.pageX + "px",
+  });
+  return false;
+});
+
+$(".id").on("contextmenu", function (e) {
+  $("#rowmenu").show(100);
+  $("#rowmenu").css({
+    top: e.pageY + "px",
+    left: e.pageX + "px",
+  });
+  return false;
+});
+
+$(document).on("click", function (e) {
+  $("#rowmenu").hide();
+  $("#colmenu").hide();
+});
 
 function init() {
   let table = new Table();
@@ -98,8 +74,8 @@ class Row {
 
 class Table {
   constructor() {}
-  public columns: Array<Column>;
-  public rows: Array<Row>;
+  public columns: Array<Column> = [];
+  public rows: Array<Row> = [];
 
   createEmptyTable(col: number, row: number) {
     this.columns = new Array<Column>();
@@ -192,19 +168,4 @@ class Table {
       row.deleteColumn(index);
     }
   }
-
-  // createTableFromJSON(columns: any[], data: any) {
-  //   this.columns = new Array<Column>();
-  //   for (let column of columns) {
-  //     let col = new Column(column.name, column.selector);
-  //     this.columns.push(col);
-  //   }
-
-  //   this.rows = new Array<Row>();
-  //   for (var i = 0; i < data.length; i++) {
-  //     let row = new Row(this.columns.length);
-  //     this.rows.push(row);
-  //   }
-  //   this.generateDataToView();
-  // }
 }

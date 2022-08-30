@@ -4,11 +4,22 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="script/index.js"></script>
     <link rel="stylesheet" href="style/style.css" />
     <title>表格</title>
   </head>
   <body onLoad="init();">
     <div id="container"></div>
+    <ul id="rowmenu">
+      <li><a href="javascript:toDetail_();">删除当前行</a></li>
+      <li><a href="javascript:toTelecontrol_();">上面添加一行</a></li>
+      <li><a href="javascript:;">下面添加一行</a></li>
+    </ul>
+    <ul id="colmenu">
+      <li><a href="javascript:toDetail_();">删除当前列</a></li>
+      <li><a href="javascript:toTelecontrol_();">左边添加一列</a></li>
+      <li><a href="javascript:;">右边添加一列</a></li>
+    </ul>
   </body>
 </html>

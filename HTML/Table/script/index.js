@@ -1,51 +1,26 @@
-var testColumns = [
-    {
-        name: " ",
-        selector: "row"
-    },
-    {
-        name: "Name",
-        selector: "name"
-    },
-    {
-        name: "Gender",
-        selector: "gender"
-    },
-    {
-        name: "Birthday",
-        selector: "birthday"
-    },
-    {
-        name: "Job",
-        selector: "job"
-    },
-];
-var testData = [
-    {
-        name: "Gillian",
-        gender: "female",
-        birthday: "1996.3",
-        job: "writer"
-    },
-    {
-        name: "Florrie",
-        gender: "female",
-        birthday: "1988.5",
-        job: "receptionist"
-    },
-    {
-        name: "Grace",
-        gender: "male",
-        birthday: "1978.2",
-        job: "manager"
-    },
-    {
-        name: "Janet",
-        gender: "female",
-        birthday: "1990.1",
-        job: "boss"
-    },
-];
+console.log(1);
+$("#rowmenu").hide();
+$("#colmenu").hide();
+$(".head").on("contextmenu", function (e) {
+    $("#colmenu").show(100);
+    $("#colmenu").css({
+        top: e.pageY + "px",
+        left: e.pageX + "px"
+    });
+    return false;
+});
+$(".id").on("contextmenu", function (e) {
+    $("#rowmenu").show(100);
+    $("#rowmenu").css({
+        top: e.pageY + "px",
+        left: e.pageX + "px"
+    });
+    return false;
+});
+$(document).on("click", function (e) {
+    $("#rowmenu").hide();
+    $("#colmenu").hide();
+});
 function init() {
     var table = new Table();
     // table.createTableFromJSON(testColumns, testData);
@@ -90,6 +65,8 @@ var Row = /** @class */ (function () {
 }());
 var Table = /** @class */ (function () {
     function Table() {
+        this.columns = [];
+        this.rows = [];
     }
     Table.prototype.createEmptyTable = function (col, row) {
         this.columns = new Array();
