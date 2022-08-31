@@ -149,7 +149,6 @@ class Column {
     col.className = "head";
     $(col).on("contextmenu", function (e) {
       curCol = $(this);
-      console.log("是表格的第 " + Number(curCol.index() - 1) + " 列");
       $("#rowmenu").hide();
       $("#colmenu").show(100);
       $("#colmenu").css({
@@ -157,6 +156,25 @@ class Column {
         left: e.pageX + "px",
       });
       return false;
+    });
+    $(col).on("click", function () {
+      clearState();
+      let rows = $("#showTable").children();
+      console.log("test rows ", rows.length, $(this).index());
+      rows.each(function (index, element) {
+        let item = $(element).children().eq($(col).index());
+        item.addClass("selected");
+        item.addClass("left");
+        item.addClass("right");
+        if (index == 1) {
+          item.addClass("top");
+          clearLastFocus();
+          lastFocus = item;
+          setLastFocus();
+        } else if (index == rows.length - 1) {
+          item.addClass("bottom");
+        }
+      });
     });
     let colresize = this.createColResize();
     colresize.appendTo(col);
@@ -185,24 +203,11 @@ class Cell {
     let cell = document.createElement("div");
     $(cell).on("click", function () {
       if (lastFocus !== undefined) {
-        console.log("test lastFocus ", lastFocus);
-        lastFocus.removeClass("focus");
-        lastFocus.parent().children(".id").removeClass("focus");
-        $("#showTable")
-          .children(":first")
-          .children()
-          .eq(lastFocus.index())
-          .removeClass("focus");
+        clearLastFocus();
       }
       clearState();
       lastFocus = $(this);
-      $(this).parent().children(".id").addClass("focus");
-      $("#showTable")
-        .children(":first")
-        .children()
-        .eq($(this).index())
-        .addClass("focus");
-      $(this).addClass("focus");
+      setLastFocus();
     });
     $(cell).on("dblclick", function () {
       if (lastFocus !== undefined) {
@@ -240,7 +245,6 @@ class Row {
     idCell.className = "id";
     $(idCell).on("contextmenu", function (e) {
       curRow = $(this);
-      console.log("是表格的第 " + Number(e.target.innerText) + " 行");
       $("#colmenu").hide();
       $("#rowmenu").show(100);
       $("#rowmenu").css({
@@ -248,6 +252,18 @@ class Row {
         left: e.pageX + "px",
       });
       return false;
+    });
+    $(idCell).on("click", function () {
+      clearState();
+      let children = $(this).parent().children();
+      $(children[1]).addClass("left");
+      $(children[children.length - 1]).addClass("right");
+      children.addClass("selected");
+      children.addClass("top");
+      children.addClass("bottom");
+      clearLastFocus();
+      lastFocus = $(children[1]);
+      setLastFocus();
     });
     let rowresize = this.createRowResize();
     rowresize.appendTo(idCell);
@@ -453,4 +469,27 @@ function clearState() {
   availableChildren.removeClass("right");
   availableChildren.parent().children(".id").removeClass("focus");
   $("#showTable").find(".head").removeClass("focus");
+}
+
+function clearLastFocus() {
+  if (lastFocus == undefined) {
+    return;
+  }
+  lastFocus.removeClass("focus");
+  lastFocus.parent().children(".id").removeClass("focus");
+  $("#showTable")
+    .children(":first")
+    .children()
+    .eq(lastFocus.index())
+    .removeClass("focus");
+}
+
+function setLastFocus() {
+  lastFocus.parent().children(".id").addClass("focus");
+  $("#showTable")
+    .children(":first")
+    .children()
+    .eq(lastFocus.index())
+    .addClass("focus");
+  lastFocus.addClass("focus");
 }

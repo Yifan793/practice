@@ -114,6 +114,7 @@ div {
 }
 .id:hover {
   background-color: rgb(159, 213, 183);
+  /* cursor: e-resize; */
 }
 .id:hover div {
   background-color: rgb(159, 213, 183);
@@ -133,7 +134,6 @@ div {
   display: table-row;
   vertical-align: middle;
 }
-
 ul {
   background-color: white;
   color: #b0c0c7;
