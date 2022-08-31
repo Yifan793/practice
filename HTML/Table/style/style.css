@@ -8,10 +8,8 @@
   white-space: nowrap;
   display: table;
   table-layout: fixed;
-  /* width: auto; */
 }
 .head {
-  /* display: inline-block; */
   border-bottom: 0.5px solid black;
   border-left: 0.5px solid rgb(224, 224, 224);
   border-right: 0.5px solid rgb(224, 224, 224);
@@ -21,6 +19,24 @@
   text-align: center;
   display: table-cell;
   vertical-align: middle;
+  position: relative;
+}
+.colresize {
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: rgb(240, 240, 240);
+}
+.colresize:hover {
+  cursor: col-resize;
+}
+.head:hover {
+  background-color: rgb(159, 213, 183);
+}
+.head:hover div {
+  background-color: rgb(159, 213, 183);
 }
 .cell {
   /* display: inline-block; */
@@ -32,11 +48,11 @@
   display: table-cell;
   vertical-align: middle;
 }
-.cell:active {
-  border: 0.5px solid red;
+.cell:focus-visible {
+  outline: 2px auto green;
 }
-.cell:focus {
-  border: 0.5px solid red;
+.cell.focus {
+  outline: 2px auto green;
 }
 .id {
   display: inline-block;
@@ -45,11 +61,27 @@
   border-right: 0.5px solid black;
   background-color: rgb(240, 240, 240);
   width: 50px;
-  /* height: 100%; */
   font-weight: bold;
   text-align: center;
   display: table-cell;
   vertical-align: middle;
+  position: relative;
+}
+.id:hover {
+  background-color: rgb(159, 213, 183);
+}
+.id:hover div {
+  background-color: rgb(159, 213, 183);
+}
+.rowresize {
+  height: 4px;
+  width: 100%;
+  background-color: rgb(240, 240, 240);
+  position: absolute;
+  bottom: 0px;
+}
+.rowresize:hover {
+  cursor: row-resize;
 }
 .row {
   height: 30px;
@@ -60,16 +92,19 @@
 ul {
   background-color: white;
   color: #b0c0c7;
-  width: 150px;
+  width: 100px;
   display: none;
   position: absolute;
-  padding: 10px;
-  box-shadow: 0px 0px 5px black;
-  border-radius: 10px;
+  padding: 2px;
+  /* box-shadow: 0px 0px 5px black; */
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 4px;
 }
 li {
   list-style: none;
-  line-height: 40px;
+  line-height: 20px;
+  cursor: pointer;
+  color: rgb(62, 62, 62);
 }
 li:hover {
   color: white;
