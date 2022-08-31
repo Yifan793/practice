@@ -1,16 +1,17 @@
 $("#rowmenu").hide();
 $("#colmenu").hide();
-var curCol = -1;
-var curRow = -1;
+var curCol;
+var curRow;
 var lastFocus;
 var colresizeElement;
 var rowresizeElement;
 var press = false;
+var pressCell = false;
 var offsetLeft = 0;
 var offsetTop = 0;
 jQuery(function () {
     $("#rowmenu li").on("click", function (e) {
-        if (curRow == -1) {
+        if (curRow == undefined) {
             return;
         }
         var name = e.target.className;
@@ -18,16 +19,16 @@ jQuery(function () {
             table.deleteRow(curRow);
         }
         else if (name == "addbefore") {
-            table.insertRow(curRow);
+            table.insertRow(curRow, "before");
         }
         else if (name == "addafter") {
-            table.insertRow(curRow + 1);
+            table.insertRow(curRow, "after");
         }
-        table.generateDataToView();
+        // table.generateDataToView();
         $("#rowmenu").hide();
     });
     $("#colmenu li").on("click", function (e) {
-        if (curCol == -1) {
+        if (curCol == undefined) {
             return;
         }
         var name = e.target.className;
@@ -35,12 +36,12 @@ jQuery(function () {
             table.deleteColumn(curCol);
         }
         else if (name == "addbefore") {
-            table.insertColumn(curCol);
+            table.insertColumn(curCol, "before");
         }
         else if (name == "addafter") {
-            table.insertColumn(curCol + 1);
+            table.insertColumn(curCol, "after");
         }
-        table.generateDataToView();
+        // table.generateDataToView();
         $("#colmenu").hide();
     });
 });
@@ -55,30 +56,62 @@ $(document).on("click", function (e) {
 });
 $(document).on("mouseup", function () {
     press = false;
+    pressCell = false;
     colresizeElement = undefined;
     rowresizeElement = undefined;
-    console.log("press", press);
 });
 $(document).on("mousemove", function (e) {
     var _a, _b;
-    console.log("press", press);
-    if (!press ||
-        (colresizeElement == undefined && rowresizeElement == undefined)) {
-        return;
-    }
-    if (colresizeElement != undefined) {
+    if (press && colresizeElement != undefined) {
         var width = e.pageX - Number((_a = $(colresizeElement).parent().offset()) === null || _a === void 0 ? void 0 : _a.left);
         width = width < 100 ? 100 : width;
         $(colresizeElement)
             .parent()
             .width(width + "px");
     }
-    else if (rowresizeElement != undefined) {
+    else if (press && rowresizeElement != undefined) {
         var height = e.pageY - Number((_b = $(rowresizeElement).parent().offset()) === null || _b === void 0 ? void 0 : _b.top);
         height = height < 30 ? 30 : height;
         $(rowresizeElement)
             .parent()
             .height(height + "px");
+    }
+    else if (pressCell && lastFocus != undefined) {
+        var cur = $(e.target);
+        var availableRows = $("#showTable").find(".row");
+        var lastCol_1 = lastFocus.index();
+        var lastRow = lastFocus.parent().index();
+        var curCol_1 = cur.index();
+        var curRow_1 = cur.parent().index();
+        var hoverRows_1 = availableRows.slice(Math.min(lastRow, curRow_1), Math.max(lastRow, curRow_1) + 1);
+        clearState();
+        hoverRows_1.each(function (row) {
+            var availableCells = $(this).find(".cell");
+            availableCells.each(function (index) {
+                if (index < Math.min(lastCol_1, curCol_1)) {
+                    return;
+                }
+                if (index > Math.max(lastCol_1, curCol_1)) {
+                    return;
+                }
+                $("#showTable")
+                    .children(":first")
+                    .children()
+                    .eq(index)
+                    .addClass("focus");
+            });
+            availableCells = availableCells.slice(Math.min(lastCol_1, curCol_1) - 1, Math.max(lastCol_1, curCol_1));
+            if (row == 0) {
+                availableCells.addClass("top");
+            }
+            else if (row == hoverRows_1.length - 1) {
+                availableCells.addClass("bottom");
+            }
+            $(availableCells[0]).addClass("left");
+            $(availableCells[availableCells.length - 1]).addClass("right");
+            availableCells.addClass("selected");
+            availableCells.parent().children(".id").addClass("focus");
+        });
     }
 });
 var Column = /** @class */ (function () {
@@ -92,7 +125,6 @@ var Column = /** @class */ (function () {
         });
         colresize.on("mousedown", function (e) {
             press = true;
-            console.log("press", press);
             offsetLeft = e.clientX;
             colresizeElement = $(this);
             $(this).css("cursor", "col-resize");
@@ -104,8 +136,8 @@ var Column = /** @class */ (function () {
         col.innerHTML = this.numberToName(i + 1);
         col.className = "head";
         $(col).on("contextmenu", function (e) {
-            curCol = $(this).index() - 1;
-            console.log("是表格的第 " + curCol + " 列");
+            curCol = $(this);
+            console.log("是表格的第 " + Number(curCol.index() - 1) + " 列");
             $("#rowmenu").hide();
             $("#colmenu").show(100);
             $("#colmenu").css({
@@ -139,8 +171,21 @@ var Cell = /** @class */ (function () {
             if (lastFocus !== undefined) {
                 console.log("test lastFocus ", lastFocus);
                 lastFocus.removeClass("focus");
+                lastFocus.parent().children(".id").removeClass("focus");
+                $("#showTable")
+                    .children(":first")
+                    .children()
+                    .eq(lastFocus.index())
+                    .removeClass("focus");
             }
+            clearState();
             lastFocus = $(this);
+            $(this).parent().children(".id").addClass("focus");
+            $("#showTable")
+                .children(":first")
+                .children()
+                .eq($(this).index())
+                .addClass("focus");
             $(this).addClass("focus");
         });
         $(cell).on("dblclick", function () {
@@ -149,6 +194,12 @@ var Cell = /** @class */ (function () {
             }
             lastFocus = $(this);
             $(this).attr("contentEditable", "true");
+        });
+        $(cell).on("mousedown", function () {
+            pressCell = true;
+        });
+        $(cell).on("mouseup", function () {
+            pressCell = false;
         });
         cell.innerHTML = value;
         cell.className = "cell";
@@ -170,8 +221,8 @@ var Row = /** @class */ (function () {
         idCell.innerHTML = (i + 1).toString();
         idCell.className = "id";
         $(idCell).on("contextmenu", function (e) {
-            curRow = Number(e.target.innerText) - 1;
-            console.log("是表格的第 " + curRow + " 行");
+            curRow = $(this);
+            console.log("是表格的第 " + Number(e.target.innerText) + " 行");
             $("#colmenu").hide();
             $("#rowmenu").show(100);
             $("#rowmenu").css({
@@ -207,12 +258,14 @@ var Row = /** @class */ (function () {
         }
         return tr;
     };
-    Row.prototype.insertColumn = function (index) {
+    Row.prototype.insertColumn = function (row, col) {
         var cell = new Cell("", "");
-        this.cellList.splice(index, 0, cell);
+        $(cell.createCell("")).insertBefore($("#showTable").children().eq(row).children().eq(col));
+        this.cellList.splice(col - 1, 0, cell);
     };
-    Row.prototype.deleteColumn = function (index) {
-        this.cellList.splice(index, 1);
+    Row.prototype.deleteColumn = function (row, col) {
+        this.cellList.splice(col - 1, 1);
+        $("#showTable").children().eq(row).children().eq(col).remove();
     };
     return Row;
 }());
@@ -262,31 +315,95 @@ var Table = /** @class */ (function () {
         }
         return tr;
     };
-    Table.prototype.insertRow = function (index) {
+    Table.prototype.insertRow = function (item, type) {
         var row = this.generateRow();
-        this.rows.splice(index, 0, row);
+        var newrow = row.createRow(Number(item.text()));
+        if (type == "before") {
+            $(newrow).insertBefore(item.parent());
+        }
+        else if (type == "after") {
+            $(newrow).insertAfter(item.parent());
+        }
+        this.rows.splice(item.index() - 1, 0, row);
+        this.sortRow();
     };
-    Table.prototype.deleteRow = function (index) {
-        this.rows.splice(index, 1);
+    Table.prototype.deleteRow = function (item) {
+        this.rows.splice(item.parent().index - 1, 1);
+        item.parent().remove();
+        this.sortRow();
     };
     Table.prototype.generateRow = function () {
         var row = new Row(this.columns.length);
         return row;
     };
-    Table.prototype.insertColumn = function (index) {
-        var col = new Column("", "");
-        this.columns.splice(index, 0, col);
-        for (var _i = 0, _a = this.rows; _i < _a.length; _i++) {
-            var row = _a[_i];
-            row.insertColumn(index);
-        }
+    Table.prototype.sortRow = function () {
+        $("#showTable")
+            .children()
+            .each(function (index, element) {
+            if (index == 0) {
+                return;
+            }
+            $(element)
+                .children(":first")
+                .contents()
+                .filter(function () {
+                return this.nodeType == 3;
+            })
+                .each(function () {
+                this.textContent = index.toString();
+            });
+        });
     };
-    Table.prototype.deleteColumn = function (index) {
-        this.columns.splice(index, 1);
-        for (var _i = 0, _a = this.rows; _i < _a.length; _i++) {
-            var row = _a[_i];
-            row.deleteColumn(index);
+    Table.prototype.insertColumn = function (item, type) {
+        var col = new Column("", "");
+        var newcol = col.createColumn(item.index());
+        if (type == "before") {
+            $(newcol).insertBefore(item);
+            for (var i = 0; i < this.rows.length; i++) {
+                this.rows[i].insertColumn(i + 1, item.index() - 1);
+            }
         }
+        else if (type == "after") {
+            $(newcol).insertAfter(item);
+            for (var i = 0; i < this.rows.length; i++) {
+                this.rows[i].insertColumn(i + 1, item.index() + 1);
+            }
+        }
+        this.columns.splice(item.index() - 1, 0, col);
+        this.sortColumn();
+    };
+    Table.prototype.deleteColumn = function (item) {
+        this.columns.splice(item.index(), 1);
+        for (var i = 0; i < this.rows.length; i++) {
+            this.rows[i].deleteColumn(i + 1, item.index());
+        }
+        item.remove();
+        this.sortColumn();
+    };
+    Table.prototype.sortColumn = function () {
+        $("#showTable")
+            .children(":first")
+            .children()
+            .each(function (index, element) {
+            if (index == 0) {
+                return;
+            }
+            $(element)
+                .contents()
+                .filter(function () {
+                return this.nodeType == 3;
+            })
+                .each(function () {
+                var name = "";
+                while (index >= 1) {
+                    name =
+                        String.fromCharCode(64 + (index % 26 == 0 ? 26 : index % 26)) +
+                            name;
+                    index = index % 26 == 0 ? index / 26 - 1 : index / 26;
+                }
+                this.textContent = name;
+            });
+        });
     };
     return Table;
 }());
@@ -294,4 +411,14 @@ var table = new Table();
 function init() {
     table.createEmptyTable(25, 25);
     table.generateDataToView();
+}
+function clearState() {
+    var availableChildren = $("#showTable").find(".cell");
+    availableChildren.removeClass("selected");
+    availableChildren.removeClass("top");
+    availableChildren.removeClass("bottom");
+    availableChildren.removeClass("left");
+    availableChildren.removeClass("right");
+    availableChildren.parent().children(".id").removeClass("focus");
+    $("#showTable").find(".head").removeClass("focus");
 }

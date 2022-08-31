@@ -1,44 +1,45 @@
 $("#rowmenu").hide();
 $("#colmenu").hide();
 
-let curCol = -1;
-let curRow = -1;
+let curCol;
+let curRow;
 let lastFocus;
 let colresizeElement;
 let rowresizeElement;
 let press = false;
+let pressCell = false;
 let offsetLeft = 0;
 let offsetTop = 0;
 
 jQuery(function () {
   $("#rowmenu li").on("click", function (e) {
-    if (curRow == -1) {
+    if (curRow == undefined) {
       return;
     }
     let name = e.target.className;
     if (name == "delete") {
       table.deleteRow(curRow);
     } else if (name == "addbefore") {
-      table.insertRow(curRow);
+      table.insertRow(curRow, "before");
     } else if (name == "addafter") {
-      table.insertRow(curRow + 1);
+      table.insertRow(curRow, "after");
     }
-    table.generateDataToView();
+    // table.generateDataToView();
     $("#rowmenu").hide();
   });
   $("#colmenu li").on("click", function (e) {
-    if (curCol == -1) {
+    if (curCol == undefined) {
       return;
     }
     let name = e.target.className;
     if (name == "delete") {
       table.deleteColumn(curCol);
     } else if (name == "addbefore") {
-      table.insertColumn(curCol);
+      table.insertColumn(curCol, "before");
     } else if (name == "addafter") {
-      table.insertColumn(curCol + 1);
+      table.insertColumn(curCol, "after");
     }
-    table.generateDataToView();
+    // table.generateDataToView();
     $("#colmenu").hide();
   });
 });
@@ -56,31 +57,68 @@ $(document).on("click", function (e) {
 
 $(document).on("mouseup", function () {
   press = false;
+  pressCell = false;
   colresizeElement = undefined;
   rowresizeElement = undefined;
-  console.log("press", press);
 });
 
 $(document).on("mousemove", function (e) {
-  console.log("press", press);
-  if (
-    !press ||
-    (colresizeElement == undefined && rowresizeElement == undefined)
-  ) {
-    return;
-  }
-  if (colresizeElement != undefined) {
+  if (press && colresizeElement != undefined) {
     let width = e.pageX - Number($(colresizeElement).parent().offset()?.left);
     width = width < 100 ? 100 : width;
     $(colresizeElement)
       .parent()
       .width(width + "px");
-  } else if (rowresizeElement != undefined) {
+  } else if (press && rowresizeElement != undefined) {
     let height = e.pageY - Number($(rowresizeElement).parent().offset()?.top);
     height = height < 30 ? 30 : height;
     $(rowresizeElement)
       .parent()
       .height(height + "px");
+  } else if (pressCell && lastFocus != undefined) {
+    let cur = $(e.target);
+    let availableRows = $("#showTable").find(".row");
+
+    let lastCol = lastFocus.index();
+    let lastRow = lastFocus.parent().index();
+    let curCol = cur.index();
+    let curRow = cur.parent().index();
+    let hoverRows = availableRows.slice(
+      Math.min(lastRow, curRow),
+      Math.max(lastRow, curRow) + 1
+    );
+
+    clearState();
+
+    hoverRows.each(function (row) {
+      let availableCells = $(this).find(".cell");
+      availableCells.each(function (index) {
+        if (index < Math.min(lastCol, curCol)) {
+          return;
+        }
+        if (index > Math.max(lastCol, curCol)) {
+          return;
+        }
+        $("#showTable")
+          .children(":first")
+          .children()
+          .eq(index)
+          .addClass("focus");
+      });
+      availableCells = availableCells.slice(
+        Math.min(lastCol, curCol) - 1,
+        Math.max(lastCol, curCol)
+      );
+      if (row == 0) {
+        availableCells.addClass("top");
+      } else if (row == hoverRows.length - 1) {
+        availableCells.addClass("bottom");
+      }
+      $(availableCells[0]).addClass("left");
+      $(availableCells[availableCells.length - 1]).addClass("right");
+      availableCells.addClass("selected");
+      availableCells.parent().children(".id").addClass("focus");
+    });
   }
 });
 
@@ -98,7 +136,6 @@ class Column {
     });
     colresize.on("mousedown", function (e) {
       press = true;
-      console.log("press", press);
       offsetLeft = e.clientX;
       colresizeElement = $(this);
       $(this).css("cursor", "col-resize");
@@ -111,8 +148,8 @@ class Column {
     col.innerHTML = this.numberToName(i + 1);
     col.className = "head";
     $(col).on("contextmenu", function (e) {
-      curCol = $(this).index() - 1;
-      console.log("是表格的第 " + curCol + " 列");
+      curCol = $(this);
+      console.log("是表格的第 " + Number(curCol.index() - 1) + " 列");
       $("#rowmenu").hide();
       $("#colmenu").show(100);
       $("#colmenu").css({
@@ -150,8 +187,21 @@ class Cell {
       if (lastFocus !== undefined) {
         console.log("test lastFocus ", lastFocus);
         lastFocus.removeClass("focus");
+        lastFocus.parent().children(".id").removeClass("focus");
+        $("#showTable")
+          .children(":first")
+          .children()
+          .eq(lastFocus.index())
+          .removeClass("focus");
       }
+      clearState();
       lastFocus = $(this);
+      $(this).parent().children(".id").addClass("focus");
+      $("#showTable")
+        .children(":first")
+        .children()
+        .eq($(this).index())
+        .addClass("focus");
       $(this).addClass("focus");
     });
     $(cell).on("dblclick", function () {
@@ -160,6 +210,12 @@ class Cell {
       }
       lastFocus = $(this);
       $(this).attr("contentEditable", "true");
+    });
+    $(cell).on("mousedown", function () {
+      pressCell = true;
+    });
+    $(cell).on("mouseup", function () {
+      pressCell = false;
     });
     cell.innerHTML = value;
     cell.className = "cell";
@@ -183,8 +239,8 @@ class Row {
     idCell.innerHTML = (i + 1).toString();
     idCell.className = "id";
     $(idCell).on("contextmenu", function (e) {
-      curRow = Number(e.target.innerText) - 1;
-      console.log("是表格的第 " + curRow + " 行");
+      curRow = $(this);
+      console.log("是表格的第 " + Number(e.target.innerText) + " 行");
       $("#colmenu").hide();
       $("#rowmenu").show(100);
       $("#rowmenu").css({
@@ -224,13 +280,17 @@ class Row {
     return tr;
   }
 
-  insertColumn(index: number) {
+  insertColumn(row: number, col: number) {
     let cell = new Cell("", "");
-    this.cellList.splice(index, 0, cell);
+    $(cell.createCell("")).insertBefore(
+      $("#showTable").children().eq(row).children().eq(col)
+    );
+    this.cellList.splice(col - 1, 0, cell);
   }
 
-  deleteColumn(index: number) {
-    this.cellList.splice(index, 1);
+  deleteColumn(row: number, col: number) {
+    this.cellList.splice(col - 1, 1);
+    $("#showTable").children().eq(row).children().eq(col).remove();
   }
 }
 
@@ -286,30 +346,94 @@ class Table {
     return tr;
   }
 
-  insertRow(index: number) {
+  insertRow(item: any, type: string) {
     let row = this.generateRow();
-    this.rows.splice(index, 0, row);
+    let newrow = row.createRow(Number(item.text()));
+    if (type == "before") {
+      $(newrow).insertBefore(item.parent());
+    } else if (type == "after") {
+      $(newrow).insertAfter(item.parent());
+    }
+    this.rows.splice(item.index() - 1, 0, row);
+    this.sortRow();
   }
-  deleteRow(index: number) {
-    this.rows.splice(index, 1);
+  deleteRow(item: any) {
+    this.rows.splice(item.parent().index - 1, 1);
+    item.parent().remove();
+    this.sortRow();
   }
   generateRow() {
     let row = new Row(this.columns.length);
     return row;
   }
-
-  insertColumn(index: number) {
-    let col = new Column("", "");
-    this.columns.splice(index, 0, col);
-    for (let row of this.rows) {
-      row.insertColumn(index);
-    }
+  sortRow() {
+    $("#showTable")
+      .children()
+      .each(function (index, element) {
+        if (index == 0) {
+          return;
+        }
+        $(element)
+          .children(":first")
+          .contents()
+          .filter(function () {
+            return this.nodeType == 3;
+          })
+          .each(function () {
+            this.textContent = index.toString();
+          });
+      });
   }
-  deleteColumn(index: number) {
-    this.columns.splice(index, 1);
-    for (let row of this.rows) {
-      row.deleteColumn(index);
+
+  insertColumn(item: any, type: string) {
+    let col = new Column("", "");
+    let newcol = col.createColumn(item.index());
+    if (type == "before") {
+      $(newcol).insertBefore(item);
+      for (let i = 0; i < this.rows.length; i++) {
+        this.rows[i].insertColumn(i + 1, item.index() - 1);
+      }
+    } else if (type == "after") {
+      $(newcol).insertAfter(item);
+      for (let i = 0; i < this.rows.length; i++) {
+        this.rows[i].insertColumn(i + 1, item.index() + 1);
+      }
     }
+    this.columns.splice(item.index() - 1, 0, col);
+    this.sortColumn();
+  }
+  deleteColumn(item: any) {
+    this.columns.splice(item.index(), 1);
+    for (let i = 0; i < this.rows.length; i++) {
+      this.rows[i].deleteColumn(i + 1, item.index());
+    }
+    item.remove();
+    this.sortColumn();
+  }
+  sortColumn() {
+    $("#showTable")
+      .children(":first")
+      .children()
+      .each(function (index, element) {
+        if (index == 0) {
+          return;
+        }
+        $(element)
+          .contents()
+          .filter(function () {
+            return this.nodeType == 3;
+          })
+          .each(function () {
+            let name = "";
+            while (index >= 1) {
+              name =
+                String.fromCharCode(64 + (index % 26 == 0 ? 26 : index % 26)) +
+                name;
+              index = index % 26 == 0 ? index / 26 - 1 : index / 26;
+            }
+            this.textContent = name;
+          });
+      });
   }
 }
 
@@ -318,4 +442,15 @@ let table = new Table();
 function init() {
   table.createEmptyTable(25, 25);
   table.generateDataToView();
+}
+
+function clearState() {
+  let availableChildren = $("#showTable").find(".cell");
+  availableChildren.removeClass("selected");
+  availableChildren.removeClass("top");
+  availableChildren.removeClass("bottom");
+  availableChildren.removeClass("left");
+  availableChildren.removeClass("right");
+  availableChildren.parent().children(".id").removeClass("focus");
+  $("#showTable").find(".head").removeClass("focus");
 }
