@@ -6,10 +6,8 @@ let curRow;
 let lastFocus;
 let colresizeElement;
 let rowresizeElement;
-let press = false;
+let pressResize = false;
 let pressCell = false;
-let offsetLeft = 0;
-let offsetTop = 0;
 
 jQuery(function () {
   $("#rowmenu li").on("click", function (e) {
@@ -24,7 +22,6 @@ jQuery(function () {
     } else if (name == "addafter") {
       table.insertRow(curRow, "after");
     }
-    // table.generateDataToView();
     $("#rowmenu").hide();
   });
   $("#colmenu li").on("click", function (e) {
@@ -39,7 +36,6 @@ jQuery(function () {
     } else if (name == "addafter") {
       table.insertColumn(curCol, "after");
     }
-    // table.generateDataToView();
     $("#colmenu").hide();
   });
 });
@@ -56,59 +52,49 @@ $(document).on("click", function (e) {
 });
 
 $(document).on("mouseup", function () {
-  press = false;
+  pressResize = false;
   pressCell = false;
   colresizeElement = undefined;
   rowresizeElement = undefined;
 });
 
 $(document).on("mousemove", function (e) {
-  if (press && colresizeElement != undefined) {
+  if (pressResize && colresizeElement != undefined) {
     let width = e.pageX - Number($(colresizeElement).parent().offset()?.left);
     width = width < 100 ? 100 : width;
     $(colresizeElement)
       .parent()
       .width(width + "px");
-  } else if (press && rowresizeElement != undefined) {
+  } else if (pressResize && rowresizeElement != undefined) {
     let height = e.pageY - Number($(rowresizeElement).parent().offset()?.top);
     height = height < 30 ? 30 : height;
     $(rowresizeElement)
       .parent()
       .height(height + "px");
   } else if (pressCell && lastFocus != undefined) {
-    let cur = $(e.target);
-    let availableRows = $("#showTable").find(".row");
+    clearState();
 
+    let cur = $(e.target);
     let lastCol = lastFocus.index();
     let lastRow = lastFocus.parent().index();
     let curCol = cur.index();
     let curRow = cur.parent().index();
+
+    let availableRows = $("#showTable").find(".row");
     let hoverRows = availableRows.slice(
       Math.min(lastRow, curRow),
       Math.max(lastRow, curRow) + 1
     );
 
-    clearState();
-
     hoverRows.each(function (row) {
       let availableCells = $(this).find(".cell");
-      availableCells.each(function (index) {
-        if (index < Math.min(lastCol, curCol)) {
-          return;
-        }
-        if (index > Math.max(lastCol, curCol)) {
-          return;
-        }
-        $("#showTable")
-          .children(":first")
-          .children()
-          .eq(index)
-          .addClass("focus");
-      });
       availableCells = availableCells.slice(
         Math.min(lastCol, curCol) - 1,
         Math.max(lastCol, curCol)
       );
+      availableCells.each(function (index) {
+        setHeadFocus(index + Math.min(lastCol, curCol));
+      });
       if (row == 0) {
         availableCells.addClass("top");
       } else if (row == hoverRows.length - 1) {
@@ -135,8 +121,7 @@ class Column {
       class: "colresize",
     });
     colresize.on("mousedown", function (e) {
-      press = true;
-      offsetLeft = e.clientX;
+      pressResize = true;
       colresizeElement = $(this);
       $(this).css("cursor", "col-resize");
     });
@@ -157,10 +142,12 @@ class Column {
       });
       return false;
     });
-    $(col).on("click", function () {
+    $(col).on("mousedown", function () {
+      if (pressResize) {
+        return;
+      }
       clearState();
       let rows = $("#showTable").children();
-      console.log("test rows ", rows.length, $(this).index());
       rows.each(function (index, element) {
         let item = $(element).children().eq($(col).index());
         item.addClass("selected");
@@ -201,7 +188,7 @@ class Cell {
 
   createCell(value: string) {
     let cell = document.createElement("div");
-    $(cell).on("click", function () {
+    $(cell).on("mousedown", function () {
       if (lastFocus !== undefined) {
         clearLastFocus();
       }
@@ -253,7 +240,10 @@ class Row {
       });
       return false;
     });
-    $(idCell).on("click", function () {
+    $(idCell).on("mousedown", function () {
+      if (pressResize) {
+        return;
+      }
       clearState();
       let children = $(this).parent().children();
       $(children[1]).addClass("left");
@@ -275,8 +265,7 @@ class Row {
       class: "rowresize",
     });
     rowresize.on("mousedown", function (e) {
-      press = true;
-      offsetLeft = e.clientX;
+      pressResize = true;
       rowresizeElement = $(this);
       $(this).css("cursor", "row-resize");
     });
@@ -477,19 +466,19 @@ function clearLastFocus() {
   }
   lastFocus.removeClass("focus");
   lastFocus.parent().children(".id").removeClass("focus");
-  $("#showTable")
-    .children(":first")
-    .children()
-    .eq(lastFocus.index())
-    .removeClass("focus");
+  removeHeadFocus(lastFocus.index());
 }
 
 function setLastFocus() {
   lastFocus.parent().children(".id").addClass("focus");
-  $("#showTable")
-    .children(":first")
-    .children()
-    .eq(lastFocus.index())
-    .addClass("focus");
+  setHeadFocus(lastFocus.index());
   lastFocus.addClass("focus");
+}
+
+function setHeadFocus(index: number) {
+  $("#showTable").children(":first").children().eq(index).addClass("focus");
+}
+
+function removeHeadFocus(index: number) {
+  $("#showTable").children(":first").children().eq(index).removeClass("focus");
 }

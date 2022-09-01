@@ -5,10 +5,8 @@ var curRow;
 var lastFocus;
 var colresizeElement;
 var rowresizeElement;
-var press = false;
+var pressResize = false;
 var pressCell = false;
-var offsetLeft = 0;
-var offsetTop = 0;
 jQuery(function () {
     $("#rowmenu li").on("click", function (e) {
         if (curRow == undefined) {
@@ -24,7 +22,6 @@ jQuery(function () {
         else if (name == "addafter") {
             table.insertRow(curRow, "after");
         }
-        // table.generateDataToView();
         $("#rowmenu").hide();
     });
     $("#colmenu li").on("click", function (e) {
@@ -41,7 +38,6 @@ jQuery(function () {
         else if (name == "addafter") {
             table.insertColumn(curCol, "after");
         }
-        // table.generateDataToView();
         $("#colmenu").hide();
     });
 });
@@ -55,21 +51,21 @@ $(document).on("click", function (e) {
     $("#colmenu").hide();
 });
 $(document).on("mouseup", function () {
-    press = false;
+    pressResize = false;
     pressCell = false;
     colresizeElement = undefined;
     rowresizeElement = undefined;
 });
 $(document).on("mousemove", function (e) {
     var _a, _b;
-    if (press && colresizeElement != undefined) {
+    if (pressResize && colresizeElement != undefined) {
         var width = e.pageX - Number((_a = $(colresizeElement).parent().offset()) === null || _a === void 0 ? void 0 : _a.left);
         width = width < 100 ? 100 : width;
         $(colresizeElement)
             .parent()
             .width(width + "px");
     }
-    else if (press && rowresizeElement != undefined) {
+    else if (pressResize && rowresizeElement != undefined) {
         var height = e.pageY - Number((_b = $(rowresizeElement).parent().offset()) === null || _b === void 0 ? void 0 : _b.top);
         height = height < 30 ? 30 : height;
         $(rowresizeElement)
@@ -77,30 +73,20 @@ $(document).on("mousemove", function (e) {
             .height(height + "px");
     }
     else if (pressCell && lastFocus != undefined) {
+        clearState();
         var cur = $(e.target);
-        var availableRows = $("#showTable").find(".row");
         var lastCol_1 = lastFocus.index();
         var lastRow = lastFocus.parent().index();
         var curCol_1 = cur.index();
         var curRow_1 = cur.parent().index();
+        var availableRows = $("#showTable").find(".row");
         var hoverRows_1 = availableRows.slice(Math.min(lastRow, curRow_1), Math.max(lastRow, curRow_1) + 1);
-        clearState();
         hoverRows_1.each(function (row) {
             var availableCells = $(this).find(".cell");
-            availableCells.each(function (index) {
-                if (index < Math.min(lastCol_1, curCol_1)) {
-                    return;
-                }
-                if (index > Math.max(lastCol_1, curCol_1)) {
-                    return;
-                }
-                $("#showTable")
-                    .children(":first")
-                    .children()
-                    .eq(index)
-                    .addClass("focus");
-            });
             availableCells = availableCells.slice(Math.min(lastCol_1, curCol_1) - 1, Math.max(lastCol_1, curCol_1));
+            availableCells.each(function (index) {
+                setHeadFocus(index + Math.min(lastCol_1, curCol_1));
+            });
             if (row == 0) {
                 availableCells.addClass("top");
             }
@@ -124,8 +110,7 @@ var Column = /** @class */ (function () {
             "class": "colresize"
         });
         colresize.on("mousedown", function (e) {
-            press = true;
-            offsetLeft = e.clientX;
+            pressResize = true;
             colresizeElement = $(this);
             $(this).css("cursor", "col-resize");
         });
@@ -145,10 +130,12 @@ var Column = /** @class */ (function () {
             });
             return false;
         });
-        $(col).on("click", function () {
+        $(col).on("mousedown", function () {
+            if (pressResize) {
+                return;
+            }
             clearState();
             var rows = $("#showTable").children();
-            console.log("test rows ", rows.length, $(this).index());
             rows.each(function (index, element) {
                 var item = $(element).children().eq($(col).index());
                 item.addClass("selected");
@@ -186,7 +173,7 @@ var Cell = /** @class */ (function () {
     }
     Cell.prototype.createCell = function (value) {
         var cell = document.createElement("div");
-        $(cell).on("click", function () {
+        $(cell).on("mousedown", function () {
             if (lastFocus !== undefined) {
                 clearLastFocus();
             }
@@ -236,7 +223,10 @@ var Row = /** @class */ (function () {
             });
             return false;
         });
-        $(idCell).on("click", function () {
+        $(idCell).on("mousedown", function () {
+            if (pressResize) {
+                return;
+            }
             clearState();
             var children = $(this).parent().children();
             $(children[1]).addClass("left");
@@ -257,8 +247,7 @@ var Row = /** @class */ (function () {
             "class": "rowresize"
         });
         rowresize.on("mousedown", function (e) {
-            press = true;
-            offsetLeft = e.clientX;
+            pressResize = true;
             rowresizeElement = $(this);
             $(this).css("cursor", "row-resize");
         });
@@ -445,18 +434,16 @@ function clearLastFocus() {
     }
     lastFocus.removeClass("focus");
     lastFocus.parent().children(".id").removeClass("focus");
-    $("#showTable")
-        .children(":first")
-        .children()
-        .eq(lastFocus.index())
-        .removeClass("focus");
+    removeHeadFocus(lastFocus.index());
 }
 function setLastFocus() {
     lastFocus.parent().children(".id").addClass("focus");
-    $("#showTable")
-        .children(":first")
-        .children()
-        .eq(lastFocus.index())
-        .addClass("focus");
+    setHeadFocus(lastFocus.index());
     lastFocus.addClass("focus");
+}
+function setHeadFocus(index) {
+    $("#showTable").children(":first").children().eq(index).addClass("focus");
+}
+function removeHeadFocus(index) {
+    $("#showTable").children(":first").children().eq(index).removeClass("focus");
 }
